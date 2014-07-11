@@ -12,8 +12,15 @@ Router.map ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
 
+getApplianceIndex = ->
+	applianceIndex = Session.get 'appliance-index'
+	if applianceIndex? then applianceIndex else 0
+
 getHouseholdId = ->
 	Session.get 'household-id'
+
+getHousehold = ->
+	share.Households.findOne getHouseholdId()
 
 Template.home.rendered = ->
 	$('select').select2()
@@ -28,3 +35,10 @@ Template.home.events =
 		not isInternalLink
 	'change #uxApplianceCategory': ->
 		householdId = getHouseholdId()
+		applianceIndex = getApplianceIndex()
+		categoryId = $('#uxApplianceCategory').val()
+		category = share.Categories.findOne categoryId
+		updates = {}
+		updates["appliances.#{applianceIndex}.category"] = category
+		share.Households.update householdId, $set: updates
+		true
