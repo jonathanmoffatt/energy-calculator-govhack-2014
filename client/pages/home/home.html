@@ -67,7 +67,11 @@
 			<form id="uxAddNewApplianceForm" action="">
 				<div class="form-group">
 					<label for="uxApplianceCategory">What type of appliance is it?</label>
-					<select class="form-control" name="Category" id="uxApplianceCategory"></select>
+					<select class="form-control" name="Category" id="uxApplianceCategory">
+						{{#each categories}}
+							<option value="{{category}}">{{description}}</option>
+						{{/each}}
+					</select>
 				</div>
 			</form>
 

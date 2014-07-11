@@ -2,6 +2,11 @@ Router.map ->
 	@route 'home',
 		path: '/'
 		template: 'home'
+		data: ->
+			categories: share.Categories.find()
+
+Template.home.rendered = ->
+	$('select').select2()
 
 Template.home.events =
 	'click a': (event) ->
