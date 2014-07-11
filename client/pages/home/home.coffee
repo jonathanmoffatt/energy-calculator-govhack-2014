@@ -22,6 +22,16 @@ getHouseholdId = ->
 getHousehold = ->
 	share.Households.findOne getHouseholdId()
 
+getAppliance = ->
+	household = getHousehold()
+	appliance = household.appliances[getApplianceIndex()]
+
+setCategoryName = (categoryName) ->
+	Session.set 'category-name', categoryName
+
+getCategoryName = ->
+	Session.get 'category-name'
+
 Template.home.rendered = ->
 	#$('select').select2()
 
@@ -36,6 +46,14 @@ Template.home.helpers
 		if selected
 			console.log "selected #{category.category}"
 		if selected then 'selected' else null
+	getBrands: ->
+		category = getCategoryName()
+		brands = []
+		if category?
+			ratings = share.EnergyRatings.find(Category: category).fetch()
+			allBrands = _(ratings).map (r) -> r.Brand_Reg
+			uniqueBrands = _(allBrands).uniq()
+		brands
 
 Template.home.events =
 	'click a': (event) ->
@@ -53,4 +71,5 @@ Template.home.events =
 		updates = {}
 		updates["appliances.#{applianceIndex}.category"] = category
 		share.Households.update householdId, $set: updates
+		setCategoryName category.category
 		true
