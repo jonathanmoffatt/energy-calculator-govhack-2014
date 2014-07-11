@@ -6,7 +6,8 @@
       "npm": {},
       "select2": {},
       "select2-bootstrap3-css": {},
-      "iron-router": {}
+      "iron-router": {},
+      "jquery-easing": {}
     },
     "packages": {
       "bootstrap3-less": {
@@ -33,6 +34,11 @@
         "git": "https://github.com/EventedMind/iron-router.git",
         "tag": "v0.7.1",
         "commit": "d1ffb3f06ea4c112132b030f2eb1a70b81675ecb"
+      },
+      "jquery-easing": {
+        "git": "https://github.com/kenyee/meteor-jquery-easing.git",
+        "tag": "v1.3.0",
+        "commit": "556cf106f23692d78e5c92aa8a3bc99cf24bbd49"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
