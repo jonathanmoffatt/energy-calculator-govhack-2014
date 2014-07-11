@@ -1,12 +1,19 @@
 Router.map ->
 	@route 'home',
-		path: '/'
+		path: '/:_id'
 		template: 'home'
 		data: ->
-			categories: share.Categories.find()
+			household = if @params._id? then share.Households.findOne(@params._id) else {}
+			result =
+				household: household 
+				categories: share.Categories.find()
+			result
+		onAfterAction: ->
+			householdId = @params._id
+			Session.set 'household-id', householdId
 
 getHouseholdId = ->
-	Session.get 'householdId'
+	Session.get 'household-id'
 
 Template.home.rendered = ->
 	$('select').select2()
@@ -21,7 +28,3 @@ Template.home.events =
 		not isInternalLink
 	'change #uxApplianceCategory': ->
 		householdId = getHouseholdId()
-		if not householdId?
-			householdId = share.Households.insert created: new Date()
-			Session.set 'householdId', householdId
-			console.log "created household #{householdId}"
