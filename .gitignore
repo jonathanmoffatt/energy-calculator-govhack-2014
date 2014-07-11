@@ -1,0 +1,8 @@
+local
+build
+*DS_Store
+workspace.xml
+dictionaries
+node_modules/
+app.tar.gz
+*.log
