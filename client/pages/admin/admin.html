@@ -1,3 +1,45 @@
 <template name="admin">
-	<h1>Admin</h1>
+	<div class="container">
+		<h1>Administration</h1>
+		<h2>Dataset upload</h2>
+
+		<form class="form">
+			<div class="form-group">
+				<label for="uxCategory">Category</label>
+				<select class="form-control" id="uxCategory">
+					{{#each categories}}
+						<option value="{{category}}">{{description}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="uxDataUploader">CSV data file</label>
+				<input type="file" id="uxDataUploader"/>
+			</div>
+			<button class="btn btn-default" id="uxUploadDatasetButton" type="submit">Upload dataset</button>
+		</form>
+
+		<h2 style="margin-top: 45px;">Dataset summary</h2>
+		<table class="table">
+			<thead>
+			<tr>
+				<th>Category</th>
+				<th>Count</th>
+			</tr>
+			</thead>
+			<tbody>
+			{{#each categories}}
+				<tr>
+					<td>{{description}}</td>
+					<td>{{getCategoryCount category}}</td>
+				</tr>
+			{{/each}}
+			</tbody>
+		</table>
+
+		<div class="text-center">
+			<a href="/" class="btn btn-default btn-lg">Home</a>
+		</div>
+
+	</div>
 </template>
