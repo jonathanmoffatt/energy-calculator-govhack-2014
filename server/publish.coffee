@@ -4,6 +4,9 @@ Meteor.publish 'categories', ->
 Meteor.publish 'energyRatings', ->
 	share.EnergyRatings.find()
 
+Meteor.publish 'household', (householdId) ->
+	share.Households.find _id: householdId
+
 Meteor.publish 'households', ->
 	share.Households.find()
 

@@ -75,6 +75,36 @@
 				</div>
 			</form>
 
+			{{#if anyAppliances}}
+				<table class="table" style="margin-top: 30px;">
+					<thead>
+					<tr>
+						<th class="text-center">Type</th>
+						<th class="text-center">Brand</th>
+						<th class="text-center">Model</th>
+						<th style="width: 10px;"></th>
+						<th style="width: 10px;"></th>
+					</tr>
+					</thead>
+					<tbody>
+						{{#each household.appliances}}
+							<tr>
+								<td>{{category.category}}</td>
+								<td>{{brand}}</td>
+								<td>{{model}}</td>
+								<td>
+									<button class="edit-button btn btn-link"><i class="fa fa-edit"></i> Edit</button>
+								</td>
+								<td>
+									<button class="edit-button btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+								</td>
+							</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			{{/if}}
+
+
 			<div class="page-scroll">
 				<a href="#results" class="btn btn-circle">
 					<i class="fa fa-angle-double-down animated"></i>

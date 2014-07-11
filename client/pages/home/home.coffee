@@ -2,12 +2,12 @@ Router.map ->
 	@route 'home',
 		path: '/:_id'
 		template: 'home'
+		waitOn: ->
+			householdId = @params._id
+			this.subscribe('household', householdId)
 		data: ->
-			household = if @params._id? then share.Households.findOne(@params._id) else {}
-			result =
-				household: household 
-				categories: share.Categories.find()
-			result
+			household: share.Households.findOne(@params._id)
+			categories: share.Categories.find()
 		onAfterAction: ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
@@ -24,6 +24,11 @@ getHousehold = ->
 
 Template.home.rendered = ->
 	$('select').select2()
+
+Template.home.helpers
+	anyAppliances: ->
+		household = getHousehold()
+		household? and household.appliances.length > 0
 
 Template.home.events =
 	'click a': (event) ->
