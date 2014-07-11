@@ -1,0 +1,1 @@
+share.Households = new Meteor.Collection 'households'

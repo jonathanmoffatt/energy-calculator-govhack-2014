@@ -4,6 +4,9 @@ Meteor.publish 'categories', ->
 Meteor.publish 'energyRatings', ->
 	share.EnergyRatings.find()
 
+Meteor.publish 'households', ->
+	share.Households.find()
+
 share.Categories.deny
 	insert: ->
 		true
@@ -17,5 +20,13 @@ share.EnergyRatings.deny
 		true
 	remove: ->
 		true
+	update: ->
+		true
+
+share.Households.allow
+	insert: ->
+		true
+	remove: ->
+		false
 	update: ->
 		true
