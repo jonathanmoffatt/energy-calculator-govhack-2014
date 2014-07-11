@@ -23,12 +23,19 @@ getHousehold = ->
 	share.Households.findOne getHouseholdId()
 
 Template.home.rendered = ->
-	$('select').select2()
+	#$('select').select2()
 
 Template.home.helpers
 	anyAppliances: ->
 		household = getHousehold()
 		household? and household.appliances.length > 0
+	isCategorySelected: ->
+		category = this
+		household = getHousehold()
+		selected = household? and household.appliances[getApplianceIndex()].category._id is category._id
+		if selected
+			console.log "selected #{category.category}"
+		if selected then 'selected' else null
 
 Template.home.events =
 	'click a': (event) ->
