@@ -216,8 +216,7 @@ Template.home.events =
 	'click #uxDoneButton': ->
 		showDataEntry false
 		RefreshChart()
-		true
-
+		false
 	'click .edit-button': ->
 		appliance = this
 		console.log "switching to appliance #{appliance.index}"
