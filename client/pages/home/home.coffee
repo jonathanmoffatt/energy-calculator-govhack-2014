@@ -37,6 +37,22 @@ getHousehold = ->
 showDataEntry = (show) ->
 	Session.set 'show-data-entry', show
 
+getUsageLabel = (categoryName) ->
+	switch categoryName
+		when 'TV' then 'How many hours a day do you watch TV?'
+		when 'Dryer' then 'How many loads of drying do you do each week?'
+		when 'WashingMachine' then 'How many loads of washing do you do each week?'
+		when 'Fridge' then null
+		when 'Dishwasher' then 'How many times do you run the dishwasher each week?'
+		when 'AirConditioner' then null #for now only
+		else null
+
+setUsageLabel = ->
+	appliance = getCurrentAppliance()
+	if appliance? and appliance.category?
+		Session.set 'usage-label', getUsageLabel(appliance.category.name)
+	else
+		Session.set 'usage-label', null
 
 Template.home.rendered = ->
 	#$('select').select2()
@@ -86,6 +102,9 @@ Template.home.helpers
 		Session.get 'show-data-entry'
 	showDoneButton: ->
 		getCurrentAppliance().model?
+	showUsage: ->
+		appliance = getCurrentAppliance()
+		appliance.applianceId? and Session.get('usage-label')?
 
 Template.home.events =
 	'click a': (event) ->
@@ -108,6 +127,7 @@ Template.home.events =
 		updates = {}
 		updates["appliances.#{applianceIndex}.category"] = categoryInfo
 		share.Households.update householdId, $set: updates
+		setUsageLabel()
 		true
 	'change #uxBrand': ->
 		brand = $('#uxBrand').val()
@@ -151,6 +171,7 @@ Template.home.events =
 		console.log "switching to appliance #{appliance.index}"
 		showDataEntry true
 		setApplianceIndex appliance.index
+		setUsageLabel()
 		# don't know why this isn't working reactively, so do manually for now
 		$('#uxApplianceCategory').val(appliance.category.name)
 		$('#uxBrand').val(appliance.brand)
