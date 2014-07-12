@@ -61,6 +61,27 @@ showUsage = ->
 	appliance.applianceId? and Session.get('usage-label')?
 
 
+getAdjustedCEC = (usage) ->
+	applianceId = $('#uxModelNumber').val()
+	categoryName = $('#uxApplianceCategory').val()
+	selectedAppliance = share.Appliances.findOne({_id: applianceId})
+	defaultCEC = selectedAppliance.CEC
+
+	if categoryName == 'TV'
+		adjustedCEC = share.GetTVCostAnnually(0.259, defaultCEC, usage)
+	if categoryName == 'Dryer'
+		adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage * 52)
+	if categoryName == 'WashingMachine'
+		adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage * 52) #question is how many per week
+	if categoryName == 'Dishwasher'
+		adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage * 52)
+	if categoryName == 'AirConditioner'
+		adjustedCEC = defaultCEC #temporary
+	if categoryName == 'Fridge'
+		adjustedCEC = defaultCEC
+	adjustedCEC
+
+
 Template.home.rendered = ->
 	RefreshChart()
 	#$('select').select2()
@@ -158,11 +179,22 @@ Template.home.events =
 		updates["appliances.#{applianceIndex}.model"] = model
 		updates["appliances.#{applianceIndex}.applianceId"] = applianceId
 
-		#need to put this here as fridge has no usage
 		categoryName = $('#uxApplianceCategory').val()
+		if categoryName == 'TV'
+			usage = 10
+		if categoryName == 'Dryer'
+			usage = 1
+		if categoryName == 'WashingMachine'
+			usage = 7
+		if categoryName == 'Dishwasher'
+			usage = 365
+		if categoryName == 'AirConditioner'
+			usage = null
 		if categoryName == 'Fridge'
-			selectedAppliance = share.Appliances.findOne({_id: applianceId})
-			updates["appliances.#{applianceIndex}.adjustedCEC"] = selectedAppliance.CEC
+			usage = null
+
+		updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
+		updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
 
 		share.Households.update householdId, $set: updates
 		true
@@ -173,27 +205,7 @@ Template.home.events =
 			applianceIndex = getApplianceIndex()
 			updates = {}
 			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
-
-			#to do - refactor this
-			applianceId = $('#uxModelNumber').val()
-			categoryName = $('#uxApplianceCategory').val()
-			selectedAppliance = share.Appliances.findOne({_id: applianceId})
-			defaultCEC = selectedAppliance.CEC
-
-			if categoryName == 'TV'
-				adjustedCEC = share.GetTVCostAnnually(0.259, defaultCEC, usage)
-			if categoryName == 'Dryer'
-				adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage * 52)
-			if categoryName == 'WashingMachine'
-				adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage * 52) #question is how many per week
-			if categoryName == 'Dishwasher'
-				adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage * 52)
-			if categoryName == 'AirConditioner'
-				adjustedCEC = defaultCEC
-			#todo
-
-
-			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(adjustedCEC)
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
 
 			share.Households.update householdId, $set: updates
 		true
