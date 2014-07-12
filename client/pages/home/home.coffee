@@ -5,7 +5,9 @@ Router.map ->
 		loadingTemplate: 'loading'
 		waitOn: ->
 			householdId = @params._id
-			this.subscribe('household', householdId)
+			return [this.subscribe('household', householdId), share.CategorySubscription, share.AppliancesSubscription]
+
+
 		data: ->
 			household: share.Households.findOne(@params._id)
 			categories: share.Categories.find()
@@ -224,21 +226,18 @@ Template.home.events =
 		Meteor.setTimeout populate, 50
 		true
 
-
-myPieChart = null
-
 RefreshChart = ->
 	household = getHousehold()
+	if household
+		data = []
+		for a in household.appliances
+			data.push
+				value: parseInt(a.adjustedCEC)
+				label: a.brand + ' ' + a.model
 
-	data = []
-	for a in household.appliances
-		data.push
-			value: parseInt(a.adjustedCEC)
-			label: a.brand + ' ' + a.model
-
-	$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
-	ctx = $("#usagePieChart")[0].getContext('2d')
-	myPieChart = new Chart(ctx).Pie(data)
+		$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
+		ctx = $("#usagePieChart")[0].getContext('2d')
+		myPieChart = new Chart(ctx).Pie(data)
 
 # take appliances
 # for each appliance
