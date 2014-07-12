@@ -12,9 +12,22 @@ Router.map ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
 
+getCurrentAppliance = ->
+	appliance = Session.get 'current-appliance'
+	if not appliance?
+		appliance =
+			category: null
+	appliance
+
+setCurrentAppliance = (appliance) ->
+	Session.set 'current-appliance', appliance
+
 getApplianceIndex = ->
 	applianceIndex = Session.get 'appliance-index'
-	if applianceIndex? then applianceIndex else 0
+	if applianceIndex? then applianceIndex else -1
+
+setApplianceIndex = (index) ->
+	Session.set 'appliance-index', index
 
 getHouseholdId = ->
 	Session.get 'household-id'
@@ -24,13 +37,10 @@ getHousehold = ->
 
 getAppliance = ->
 	household = getHousehold()
-	appliance = household.appliances[getApplianceIndex()]
-
-setCategoryName = (categoryName) ->
-	Session.set 'category-name', categoryName
-
-getCategoryName = ->
-	Session.get 'category-name'
+	if household?
+		household.appliances[getApplianceIndex()]
+	else
+		category: null
 
 Template.home.rendered = ->
 	#$('select').select2()
@@ -46,17 +56,15 @@ Template.home.helpers
 		if selected
 			console.log "selected #{category.category}"
 		if selected then 'selected' else null
+	showBrands: ->
+		getAppliance().category?
 	getBrands: ->
-		[]
-###
-		category = getCategoryName()
-		brands = []
-		if category?
-			ratings = share.EnergyRatings.find(Category: category).fetch()
-			allBrands = _(ratings).map (r) -> r.Brand_Reg
-			uniqueBrands = _(allBrands).uniq()
-		brands
-###
+		appliance = getAppliance()
+		if appliance.category?
+			category = share.Categories.findOne name:appliance.category.name
+			category.brands
+		else
+			[]
 
 Template.home.events =
 	'click a': (event) ->
@@ -67,12 +75,21 @@ Template.home.events =
 			$('html, body').stop().animate({scrollTop: $(href).offset().top}, 1500, 'easeInOutExpo')
 		not isInternalLink
 	'change #uxApplianceCategory': ->
+		categoryName = $('#uxApplianceCategory').val()
+		category = share.Categories.findOne name: categoryName
+		appliance = getCurrentAppliance()
+		appliance =
+			category:
+				name: category.name
+				description: category.description
+				collection: category.collection
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
-		categoryId = $('#uxApplianceCategory').val()
-		category = share.Categories.findOne categoryId
-		updates = {}
-		updates["appliances.#{applianceIndex}.category"] = category
-		share.Households.update householdId, $set: updates
-		setCategoryName category.category
+		if applianceIndex is -1
+			share.Households.update householdId, $push: appliances: appliance
+			setApplianceIndex 0
+		else
+			updates = {}
+			updates["appliances.#{applianceIndex}"] = appliance
+			share.Households.update householdId, $set: updates
 		true
