@@ -196,3 +196,52 @@ Template.home.events =
 			$('#uxModelNumber').val(appliance.applianceId)
 		Meteor.setTimeout populate, 50
 		true
+
+
+myPieChart = null
+
+RefreshChart = ->
+
+	if myPieChart is null
+		household = getHousehold()
+		if household
+			console.log 'found data'
+		else
+			console.log 'no household here'
+		# take appliances
+		# for each appliance
+		#	value = CEC
+		#	color is random
+		#		highlight is random
+		#		label : name
+
+		data = [
+			{
+				value: 300,
+				color:"#F7464A",
+				highlight: "#FF5A5E",
+				label: "BLAH BLAH BLAH?"
+				labelColor : 'white'
+				labelFontSize : '16'
+			},
+			{
+				value: 50,
+				color: "#46BFBD",
+				highlight: "#5AD3D1"
+				label: "Green"
+				labelColor : 'white'
+				labelFontSize : '16'
+			},
+			{
+				value: 100,
+				color: "#FDB45C"
+				highlight: "#FFC870"
+				label: "Black"
+				labelColor : 'white'
+				labelFontSize : '16'
+			}
+		]
+
+
+		ctx = $("#usagePieChart")[0].getContext()
+		myPieChart = new Chart(ctx).Pie(data)
