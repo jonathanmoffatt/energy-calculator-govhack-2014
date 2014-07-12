@@ -10,7 +10,7 @@ share.GetWashingMachineCostAnnually = (rate, kWh365Loads, ActualLoad) ->
 
 #Energy rating is based on 10 hours of TV per day
 share.GetTVCostAnnually= (rate, kWH10HrsDay, ActualHours) ->
-	rate * kWH10HrsDay * ActualHours
+	rate * kWH10HrsDay * (ActualHours / 10)
 
 #Energy rating is based on 365 washes per year
 share.GetDishwasherCostAnnually = (rate, kWh365Loads, ActualLoad) ->
