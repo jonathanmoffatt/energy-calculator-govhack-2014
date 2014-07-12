@@ -190,7 +190,7 @@ Template.home.events =
 		if categoryName == 'WashingMachine'
 			usage = 7
 		if categoryName == 'Dishwasher'
-			usage = 365
+			usage = 7
 		if categoryName == 'AirConditioner'
 			usage = null
 		if categoryName == 'Fridge'
@@ -198,7 +198,7 @@ Template.home.events =
 
 		updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
 		updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
-
+		RefreshChart()
 		share.Households.update householdId, $set: updates
 		true
 	'change #uxUsage': ->
@@ -211,6 +211,7 @@ Template.home.events =
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
 
 			share.Households.update householdId, $set: updates
+			RefreshChart()
 		true
 
 	# doing weird shit, so just make it invisible as no time to fix it and can just use the done button
@@ -251,11 +252,13 @@ RefreshChart = ->
 	if household
 		data = []
 		for a in household.appliances
-			data.push
-				value: parseInt(a.adjustedCEC)
-				label: a.brand + ' ' + a.model
-				color:"#F7464A"
-				highlight: "#FF5A5E"
+			console.log a.applianceId
+			if a.applianceId
+				data.push
+					value: parseInt(a.adjustedCEC)
+					label: a.brand + ' ' + a.model
+					color:"#F7464A"
+					highlight: "#FF5A5E"
 
 		$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
 		ctx = $("#usagePieChart")[0].getContext('2d')
