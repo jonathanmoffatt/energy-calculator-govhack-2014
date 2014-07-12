@@ -25,8 +25,23 @@ Meteor.methods
 			uniqueBrands = _(allBrands).uniq()
 			share.Categories.update category._id, $set: brands: uniqueBrands
 
+
+			# list of the common field names
+			commonCECName = 'CEC'
+			commonStarName = 'StarRating'
+			commonSRI = 'SRI'
+
+			addCommonFields = (currObj, record, CECRecordName, StarRecordName, SRIRecordName) ->
+				if CECRecordName
+					currObj[commonCECName] = parseFloat(record[CECRecordName])
+				if StarRecordName
+					currObj[commonStarName] = parseFloat(record[StarRecordName])
+				if SRIRecordName
+					currObj[commonSRI] = parseFloat(record[SRIRecordName])
+
 			# create a record for every category/brand combination, containing all the models
 			setupAppliances = (category, record) ->
+
 				appliance =
 					category:
 						name: category.name
@@ -34,7 +49,34 @@ Meteor.methods
 						collection: category.collection
 					brand: record[category.brandField]
 					model: record[category.modelField]
+
+
+				if category.name == 'TV'
+					addCommonFields(appliance, record, 'CEC', 'Star', 'SRI')
+					appliance['TVStar2'] = parseFloat(record.Star2)
+
+				if category.name == 'Dryer'
+					addCommonFields(appliance, record, 'New CEC', 'New Star', 'New SRI')
+
+				if category.name == 'Fridge'
+					addCommonFields(appliance, record, 'CEC_', 'Star2009', 'SRI2009')
+
+				if category.name == 'Dishwasher'
+					addCommonFields(appliance, record, 'CEC_', 'New Star', 'New SRI')
+
+				if category.name == 'WashingMachine'
+					addCommonFields(appliance, record, 'CEC_', 'New Star', 'New SRI')
+
+				if category.name == 'AirConditioner'
+					appliance['AirCon_sri2010_cool'] = parseFloat(record["sri2010_cool"])
+					appliance['AirCon_sri2010_heat'] = parseFloat(record["sri2010_heat"])
+					appliance['AirCon_Star2010_Cool'] = parseFloat(record["Star2010_Cool"])
+					appliance['AirCon_Star2010_Heat'] = parseFloat(record['Star2010_Heat'])
+
 				share.Appliances.insert appliance
+
+
+
 			share.Appliances.remove 'category.collection': categoryCollection
 			setupAppliances(category, record) for record in json
 
