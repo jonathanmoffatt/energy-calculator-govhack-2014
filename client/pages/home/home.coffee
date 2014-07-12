@@ -44,11 +44,11 @@ Template.home.helpers
 	isCategorySelected: ->
 		categoryName = this
 		appliance = getCurrentAppliance()
-		appliance.category? and appliance.category.name is categoryName
+		if appliance.category? and appliance.category.name is categoryName then 'selected' else null
 	isBrandSelected: ->
 		brand = this
 		appliance = getCurrentAppliance()
-		appliance? and appliance.brand is brand
+		if appliance? and appliance.brand is brand then 'selected' else null
 	showBrands: ->
 		getCurrentAppliance().category?
 	getBrands: ->
@@ -58,6 +58,8 @@ Template.home.helpers
 			category.brands
 		else
 			[]
+	getModels: ->
+
 
 Template.home.events =
 	'click a': (event) ->
@@ -69,6 +71,7 @@ Template.home.events =
 		not isInternalLink
 	'change #uxApplianceCategory': ->
 		categoryName = $('#uxApplianceCategory').val()
+		console.log "changing appliance category to #{categoryName}"
 		category = share.Categories.findOne name: categoryName
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
@@ -86,8 +89,9 @@ Template.home.events =
 			updates["appliances.#{applianceIndex}"] = appliance
 			share.Households.update householdId, $set: updates
 		true
-	'click #uxBrand': ->
+	'change #uxBrand': ->
 		brand = $('#uxBrand').val()
+		console.log "changing brand to #{brand}"
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}
@@ -96,5 +100,9 @@ Template.home.events =
 		true
 	'click .edit-button': ->
 		appliance = this
+		console.log "switching to appliance #{appliance.index}"
 		setApplianceIndex appliance.index
+		# don't know why this isn't working reactively, so do manually for now
+		$('#uxApplianceCategory').val(appliance.category.name)
+		$('#uxBrand').val(appliance.brand)
 		true
