@@ -2,6 +2,7 @@ Router.map ->
 	@route 'home',
 		path: '/:_id'
 		template: 'home'
+		loadingTemplate: 'loading'
 		waitOn: ->
 			householdId = @params._id
 			this.subscribe('household', householdId)
@@ -13,14 +14,12 @@ Router.map ->
 			Session.set 'household-id', householdId
 
 getCurrentAppliance = ->
-	appliance = Session.get 'current-appliance'
-	if not appliance?
-		appliance =
-			category: null
-	appliance
-
-setCurrentAppliance = (appliance) ->
-	Session.set 'current-appliance', appliance
+	household = getHousehold()
+	applianceIndex = getApplianceIndex()
+	if household? and household.appliances? and applianceIndex isnt -1
+		household.appliances[getApplianceIndex()]
+	else
+		category: null
 
 getApplianceIndex = ->
 	applianceIndex = Session.get 'appliance-index'
@@ -34,13 +33,6 @@ getHouseholdId = ->
 
 getHousehold = ->
 	share.Households.findOne getHouseholdId()
-
-getAppliance = ->
-	household = getHousehold()
-	if household?
-		household.appliances[getApplianceIndex()]
-	else
-		category: null
 
 Template.home.rendered = ->
 	#$('select').select2()
@@ -58,9 +50,9 @@ Template.home.helpers
 		appliance = getCurrentAppliance()
 		appliance? and appliance.brand is brand
 	showBrands: ->
-		getAppliance().category?
+		getCurrentAppliance().category?
 	getBrands: ->
-		appliance = getAppliance()
+		appliance = getCurrentAppliance()
 		if appliance.category?
 			category = share.Categories.findOne name:appliance.category.name
 			category.brands
@@ -78,13 +70,14 @@ Template.home.events =
 	'change #uxApplianceCategory': ->
 		categoryName = $('#uxApplianceCategory').val()
 		category = share.Categories.findOne name: categoryName
+		householdId = getHouseholdId()
+		applianceIndex = getApplianceIndex()
 		appliance =
+			index: if applianceIndex is -1 then 0 else applianceIndex
 			category:
 				name: category.name
 				description: category.description
 				collection: category.collection
-		householdId = getHouseholdId()
-		applianceIndex = getApplianceIndex()
 		if applianceIndex is -1
 			share.Households.update householdId, $push: appliances: appliance
 			setApplianceIndex 0
@@ -92,19 +85,16 @@ Template.home.events =
 			updates = {}
 			updates["appliances.#{applianceIndex}"] = appliance
 			share.Households.update householdId, $set: updates
-		setCurrentAppliance appliance
 		true
-	'change #uxBrand': ->
+	'click #uxBrand': ->
 		brand = $('#uxBrand').val()
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}
-		updates["appliances.#{applianceIndex}".brand] = brand
-		share.Households.update householdId, updates
+		updates["appliances.#{applianceIndex}.brand"] = brand
+		share.Households.update householdId, $set: updates
 		true
 	'click .edit-button': ->
 		appliance = this
-		applianceIndex = _(getHousehold().appliances).indexOf appliance
-		setApplianceIndex applianceIndex
-		setCurrentAppliance appliance
+		setApplianceIndex appliance.index
 		true

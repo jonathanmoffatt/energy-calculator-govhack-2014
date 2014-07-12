@@ -68,6 +68,7 @@
 				<div class="form-group">
 					<label for="uxApplianceCategory">What type of appliance is it?</label>
 					<select class="form-control" name="Category" id="uxApplianceCategory">
+						<option value=""></option>
 						{{#each categories}}
 							<option value="{{name}}" selected={{isCategorySelected}}>{{description}}</option>
 						{{/each}}
@@ -77,6 +78,7 @@
 					<div class="form-group">
 						<label for="uxBrand">What brand is it?</label>
 						<select class="form-control" name="Brand" id="uxBrand">
+							<option value=""></option>
 							{{#each getBrands}}
 								<option value="{{this}}" selected="{{isBrandSelected}}">{{this}}</option>
 							{{/each}}
