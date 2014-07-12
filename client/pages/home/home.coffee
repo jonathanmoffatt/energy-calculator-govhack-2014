@@ -236,6 +236,7 @@ RefreshChart = ->
 			value: parseInt(a.adjustedCEC)
 			label: a.brand + ' ' + a.model
 
+	$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
 	ctx = $("#usagePieChart")[0].getContext('2d')
 	myPieChart = new Chart(ctx).Pie(data)
 
