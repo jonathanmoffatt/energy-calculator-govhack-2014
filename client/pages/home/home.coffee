@@ -50,12 +50,13 @@ Template.home.helpers
 		household = getHousehold()
 		household? and household.appliances.length > 0
 	isCategorySelected: ->
-		category = this
-		household = getHousehold()
-		selected = household? and household.appliances[getApplianceIndex()].category._id is category._id
-		if selected
-			console.log "selected #{category.category}"
-		if selected then 'selected' else null
+		categoryName = this
+		appliance = getCurrentAppliance()
+		appliance.category? and appliance.category.name is categoryName
+	isBrandSelected: ->
+		brand = this
+		appliance = getCurrentAppliance()
+		appliance? and appliance.brand is brand
 	showBrands: ->
 		getAppliance().category?
 	getBrands: ->
@@ -77,7 +78,6 @@ Template.home.events =
 	'change #uxApplianceCategory': ->
 		categoryName = $('#uxApplianceCategory').val()
 		category = share.Categories.findOne name: categoryName
-		appliance = getCurrentAppliance()
 		appliance =
 			category:
 				name: category.name
@@ -92,4 +92,19 @@ Template.home.events =
 			updates = {}
 			updates["appliances.#{applianceIndex}"] = appliance
 			share.Households.update householdId, $set: updates
+		setCurrentAppliance appliance
+		true
+	'change #uxBrand': ->
+		brand = $('#uxBrand').val()
+		householdId = getHouseholdId()
+		applianceIndex = getApplianceIndex()
+		updates = {}
+		updates["appliances.#{applianceIndex}".brand] = brand
+		share.Households.update householdId, updates
+		true
+	'click .edit-button': ->
+		appliance = this
+		applianceIndex = _(getHousehold().appliances).indexOf appliance
+		setApplianceIndex applianceIndex
+		setCurrentAppliance appliance
 		true

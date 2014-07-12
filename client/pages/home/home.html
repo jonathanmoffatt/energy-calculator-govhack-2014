@@ -78,7 +78,7 @@
 						<label for="uxBrand">What brand is it?</label>
 						<select class="form-control" name="Brand" id="uxBrand">
 							{{#each getBrands}}
-								<option value="{{this}}">{{this}}</option>
+								<option value="{{this}}" selected="{{isBrandSelected}}">{{this}}</option>
 							{{/each}}
 						</select>
 					</div>
@@ -99,14 +99,14 @@
 					<tbody>
 						{{#each household.appliances}}
 							<tr>
-								<td>{{category.category}}</td>
+								<td>{{category.name}}</td>
 								<td>{{brand}}</td>
 								<td>{{model}}</td>
 								<td>
 									<button class="edit-button btn btn-link"><i class="fa fa-edit"></i> Edit</button>
 								</td>
 								<td>
-									<button class="edit-button btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
+									<button class="remove-button btn btn-link"><i class="fa fa-trash-o"></i> Remove</button>
 								</td>
 							</tr>
 						{{/each}}
