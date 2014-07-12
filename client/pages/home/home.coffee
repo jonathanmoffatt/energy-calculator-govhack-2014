@@ -64,7 +64,7 @@ Template.home.helpers
 			[]
 	showModelNumbers: ->
 		getCurrentAppliance().brand?
-	getModelNumbers: ->
+	getAppliances: ->
 		appliance = getCurrentAppliance()
 		brand = appliance.brand
 		if brand?
@@ -73,15 +73,15 @@ Template.home.helpers
 				brand: brand
 			options =
 				fields:
+					_id: 1
 					model: 1
-			appliances = share.Appliances.find(criteria, options).fetch()
-			_(appliances).map (a) -> a.model
+			share.Appliances.find(criteria, options).fetch()
 		else
 			[]
 	isModelSelected: ->
-		model = this
-		appliance = getCurrentAppliance()
-		if appliance? and appliance.model is model then 'selected' else null
+		appliance = this
+		currentAppliance = getCurrentAppliance()
+		if appliance._id is currentAppliance._id then 'selected' else null
 	showDataEntry: ->
 		Session.get 'show-data-entry'
 
@@ -117,12 +117,14 @@ Template.home.events =
 		share.Households.update householdId, $set: updates
 		true
 	'change #uxModelNumber': ->
-		model = $('#uxModelNumber').val()
-		console.log "changing model to #{model}"
+		applianceId = $('#uxModelNumber').val()
+		model = $("#uxModelNumber option[value='#{applianceId}']").text()
+		console.log "changing model to #{model} and applianceId to #{applianceId}"
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}
 		updates["appliances.#{applianceIndex}.model"] = model
+		updates["appliances.#{applianceIndex}.applianceId"] = applianceId
 		share.Households.update householdId, $set: updates
 		true
 	'click #uxAddApplianceButton': ->
