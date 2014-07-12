@@ -183,7 +183,7 @@ Template.home.events =
 				adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage)
 			if categoryName == 'AirConditioner'
 				adjustedCEC = defaultCEC
-				#todo
+			#todo
 
 
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(adjustedCEC)
@@ -207,6 +207,7 @@ Template.home.events =
 		true
 	'click #uxDoneButton': ->
 		showDataEntry false
+		RefreshChart()
 		true
 
 	'click .edit-button': ->
@@ -227,20 +228,25 @@ Template.home.events =
 myPieChart = null
 
 RefreshChart = ->
-	if myPieChart is null
-		household = getHousehold()
-		if household
-			console.log 'found data'
-		else
-			console.log 'no household here'
-		# take appliances
-		# for each appliance
-		#	value = CEC
-		#	color is random
-		#		highlight is random
-		#		label : name
+	household = getHousehold()
 
-		data = [
+	data = []
+	for a in household.appliances
+		data.push
+			value: parseInt(a.adjustedCEC)
+			label: a.brand + ' ' + a.model
+
+	ctx = $("#usagePieChart")[0].getContext('2d')
+	myPieChart = new Chart(ctx).Pie(data)
+
+# take appliances
+# for each appliance
+#	value = CEC
+#	color is random
+#		highlight is random
+#		label : name
+
+###		data = [
 			{
 				value: 300,
 				color: "#F7464A",
@@ -265,8 +271,5 @@ RefreshChart = ->
 				labelColor: 'white'
 				labelFontSize: '16'
 			}
-		]
+		]###
 
-
-		ctx = $("#usagePieChart")[0].getContext()
-		myPieChart = new Chart(ctx).Pie(data)
