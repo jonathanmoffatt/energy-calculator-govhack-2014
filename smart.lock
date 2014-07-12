@@ -7,8 +7,7 @@
       "select2": {},
       "select2-bootstrap3-css": {},
       "iron-router": {},
-      "jquery-easing": {},
-      "chartjs": {}
+      "jquery-easing": {}
     },
     "packages": {
       "bootstrap3-less": {
@@ -40,11 +39,6 @@
         "git": "https://github.com/kenyee/meteor-jquery-easing.git",
         "tag": "v1.3.0",
         "commit": "556cf106f23692d78e5c92aa8a3bc99cf24bbd49"
-      },
-      "chartjs": {
-        "git": "https://github.com/donskifarrell/meteor-chartjs.git",
-        "tag": "v0.0.5",
-        "commit": "9d5e88fae172de55775ee49ac182dbe82f21a302"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
