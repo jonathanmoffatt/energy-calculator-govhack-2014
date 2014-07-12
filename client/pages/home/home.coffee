@@ -7,7 +7,6 @@ Router.map ->
 			householdId = @params._id
 			return [this.subscribe('household', householdId), share.CategorySubscription, share.AppliancesSubscription]
 
-
 		data: ->
 			household: share.Households.findOne(@params._id)
 			categories: share.Categories.find()
@@ -63,6 +62,7 @@ showUsage = ->
 
 
 Template.home.rendered = ->
+	RefreshChart()
 	#$('select').select2()
 
 Template.home.helpers
@@ -157,6 +157,13 @@ Template.home.events =
 		updates = {}
 		updates["appliances.#{applianceIndex}.model"] = model
 		updates["appliances.#{applianceIndex}.applianceId"] = applianceId
+
+		#need to put this here as fridge has no usage
+		categoryName = $('#uxApplianceCategory').val()
+		if categoryName == 'Fridge'
+			selectedAppliance = share.Appliances.findOne({_id: applianceId})
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = selectedAppliance.CEC
+
 		share.Households.update householdId, $set: updates
 		true
 	'change #uxUsage': ->
@@ -179,8 +186,6 @@ Template.home.events =
 				adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage)
 			if categoryName == 'WashingMachine'
 				adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage)
-			if categoryName == 'Fridge'
-				adjustedCEC = defaultCEC
 			if categoryName == 'Dishwasher'
 				adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage)
 			if categoryName == 'AirConditioner'
@@ -234,10 +239,15 @@ RefreshChart = ->
 			data.push
 				value: parseInt(a.adjustedCEC)
 				label: a.brand + ' ' + a.model
+				color:"#F7464A"
+				highlight: "#FF5A5E"
 
 		$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
 		ctx = $("#usagePieChart")[0].getContext('2d')
 		myPieChart = new Chart(ctx).Pie(data)
+
+		$('#legend').replaceWith(myPieChart.generateLegend())
+
 
 # take appliances
 # for each appliance
@@ -272,4 +282,7 @@ RefreshChart = ->
 				labelFontSize: '16'
 			}
 		]###
+
+
+
 
