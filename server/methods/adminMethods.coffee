@@ -11,10 +11,15 @@ Meteor.methods
 			err
 		else
 			json = response.result
+			category = share.Categories.findOne collection: categoryCollection
 			collection = share[categoryCollection]
 			collection.remove {}
 			_(json).each (record) ->
 				collection.insert record
+			sortedByBrand = _(json).sortBy (r) -> r[category.brandField]
+			allBrands = _(sortedByBrand).map (r) -> r[category.brandField]
+			uniqueBrands = _(allBrands).uniq()
+			share.Categories.update category._id, $set: brands: uniqueBrands
 			msg = "#{json.length} records were imported into collection #{categoryCollection}"
 			console.log msg
 			msg
