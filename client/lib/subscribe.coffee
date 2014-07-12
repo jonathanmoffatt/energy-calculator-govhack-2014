@@ -1,5 +1,5 @@
-Meteor.subscribe 'categories'
-Meteor.subscribe 'appliances'
+share.CategorySubscription = Meteor.subscribe 'categories'
+share.AppliancesSubscription = Meteor.subscribe 'appliances'
 ## taking it out just in case it's affecting performance and we don't need these
 # Meteor.subscribe 'tvs'
 ###
