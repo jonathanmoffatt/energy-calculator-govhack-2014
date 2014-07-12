@@ -183,11 +183,11 @@ Template.home.events =
 			if categoryName == 'TV'
 				adjustedCEC = share.GetTVCostAnnually(0.259, defaultCEC, usage)
 			if categoryName == 'Dryer'
-				adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage)
+				adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage * 52)
 			if categoryName == 'WashingMachine'
-				adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage)
+				adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage * 52) #question is how many per week
 			if categoryName == 'Dishwasher'
-				adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage)
+				adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage * 52)
 			if categoryName == 'AirConditioner'
 				adjustedCEC = defaultCEC
 			#todo
@@ -198,6 +198,7 @@ Template.home.events =
 			share.Households.update householdId, $set: updates
 		true
 
+	# doing weird shit, so just make it invisible as no time to fix it and can just use the done button
 	'click .add-appliance-button': ->
 		showDataEntry true
 		household = getHousehold()
