@@ -1,1 +1,0 @@
-share.EnergyRatings = new Meteor.Collection 'energyRatings'

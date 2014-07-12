@@ -6,20 +6,19 @@ Router.map ->
 			categories: share.Categories.find()
 
 Template.admin.rendered = ->
-	$('#uxCategory').select2()
+	#$('#uxCategory').select2()
 
 Template.admin.events =
 	'click #uxUploadDatasetButton': ->
-		category = $('#uxCategory').val()
+		categoryCollection = $('#uxCategory').val()
 		uploader = $("#uxDataUploader")
 		_(uploader[0].files).each (file) ->
 			fileReader = new FileReader()
 			fileReader.onload = (file) ->
-				Meteor.call 'adminUploadFile', category, file.srcElement.result, name, 'utf8'
-				alert 'Uploaded!'
+				Meteor.call 'adminUploadFile', categoryCollection, file.srcElement.result, name, 'utf8'
 			fileReader.readAsText file
 		false
 
 Template.admin.helpers
-	getCategoryCount: (category) ->
-		share.EnergyRatings.find(Category: category).count()
+	getCategoryCount: (categoryCollection) ->
+		share[categoryCollection].find().count()

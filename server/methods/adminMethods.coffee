@@ -1,5 +1,5 @@
 Meteor.methods
-	adminUploadFile: (category, blob, name, encoding) ->
+	adminUploadFile: (categoryCollection, blob, name, encoding) ->
 		Converter = Meteor.require('csvtojson').core.Converter
 		csvConverter = new Converter constructResult:true
 		response = Async.runSync (done) ->
@@ -11,10 +11,10 @@ Meteor.methods
 			err
 		else
 			json = response.result
-			share.EnergyRatings.remove Category: category
+			collection = share[categoryCollection]
+			collection.remove {}
 			_(json).each (record) ->
-				record.Category = category
-				share.EnergyRatings.insert record
-			msg = "#{json.length} records were imported"
+				collection.insert record
+			msg = "#{json.length} records were imported into collection #{categoryCollection}"
 			console.log msg
 			msg

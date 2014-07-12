@@ -47,6 +47,8 @@ Template.home.helpers
 			console.log "selected #{category.category}"
 		if selected then 'selected' else null
 	getBrands: ->
+		[]
+###
 		category = getCategoryName()
 		brands = []
 		if category?
@@ -54,6 +56,7 @@ Template.home.helpers
 			allBrands = _(ratings).map (r) -> r.Brand_Reg
 			uniqueBrands = _(allBrands).uniq()
 		brands
+###
 
 Template.home.events =
 	'click a': (event) ->

@@ -7,8 +7,9 @@
 			<div class="form-group">
 				<label for="uxCategory">Category</label>
 				<select class="form-control" id="uxCategory">
+					<option value=""></option>
 					{{#each categories}}
-						<option value="{{category}}">{{description}}</option>
+						<option value="{{collection}}">{{description}}</option>
 					{{/each}}
 				</select>
 			</div>
@@ -31,7 +32,7 @@
 			{{#each categories}}
 				<tr>
 					<td>{{description}}</td>
-					<td>{{getCategoryCount category}}</td>
+					<td>{{getCategoryCount collection}}</td>
 				</tr>
 			{{/each}}
 			</tbody>

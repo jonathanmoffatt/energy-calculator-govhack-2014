@@ -1,0 +1,10 @@
+share.Tvs = new Meteor.Collection 'tvs'
+share.Dryers = new Meteor.Collection 'dryers'
+share.Fridges = new Meteor.Collection 'fridges'
+share.Monitors = new Meteor.Collection 'monitors'
+share.Dishwashers = new Meteor.Collection 'dishwashers'
+share.AirConditioners = new Meteor.Collection 'airConditioners'
+share.WashingMachines = new Meteor.Collection 'washingMachines'
+
+share.Categories = new Meteor.Collection 'categories'
+share.Households = new Meteor.Collection 'households'
