@@ -84,6 +84,8 @@ Template.home.helpers
 		if appliance._id is currentAppliance._id then 'selected' else null
 	showDataEntry: ->
 		Session.get 'show-data-entry'
+	showDoneButton: ->
+		getCurrentAppliance().model?
 
 Template.home.events =
 	'click a': (event) ->
@@ -127,7 +129,7 @@ Template.home.events =
 		updates["appliances.#{applianceIndex}.applianceId"] = applianceId
 		share.Households.update householdId, $set: updates
 		true
-	'click #uxAddApplianceButton': ->
+	'click .add-appliance-button': ->
 		showDataEntry true
 		household = getHousehold()
 		indexToAdd = 0
@@ -139,6 +141,10 @@ Template.home.events =
 		console.log "adding empty appliance with index #{indexToAdd}"
 		share.Households.update household._id, $push: appliances: appliance
 		setApplianceIndex indexToAdd
+		true
+	'click #uxDoneButton': ->
+		showDataEntry false
+		true
 
 	'click .edit-button': ->
 		appliance = this
