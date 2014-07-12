@@ -54,6 +54,11 @@ setUsageLabel = ->
 	else
 		Session.set 'usage-label', null
 
+showUsage = ->
+	appliance = getCurrentAppliance()
+	appliance.applianceId? and Session.get('usage-label')?
+
+
 Template.home.rendered = ->
 	#$('select').select2()
 
@@ -103,8 +108,10 @@ Template.home.helpers
 	showDoneButton: ->
 		getCurrentAppliance().model?
 	showUsage: ->
+		showUsage()
+	getUsage: ->
 		appliance = getCurrentAppliance()
-		appliance.applianceId? and Session.get('usage-label')?
+		appliance.usage
 
 Template.home.events =
 	'click a': (event) ->
@@ -149,6 +156,16 @@ Template.home.events =
 		updates["appliances.#{applianceIndex}.applianceId"] = applianceId
 		share.Households.update householdId, $set: updates
 		true
+	'change #uxUsage': ->
+		usage = $('#uxUsage').val()
+		if usage
+			householdId = getHouseholdId()
+			applianceIndex = getApplianceIndex()
+			updates = {}
+			updates["appliances.#{applianceIndex}.usage"] = usage
+			share.Households.update householdId, $set: updates
+		true
+
 	'click .add-appliance-button': ->
 		showDataEntry true
 		household = getHousehold()
@@ -173,7 +190,9 @@ Template.home.events =
 		setApplianceIndex appliance.index
 		setUsageLabel()
 		# don't know why this isn't working reactively, so do manually for now
-		$('#uxApplianceCategory').val(appliance.category.name)
-		$('#uxBrand').val(appliance.brand)
-		$('#uxModelNumber').val(appliance.model)
+		populate = ->
+			$('#uxApplianceCategory').val(appliance.category.name)
+			$('#uxBrand').val(appliance.brand)
+			$('#uxModelNumber').val(appliance.applianceId)
+		Meteor.setTimeout populate, 50
 		true
