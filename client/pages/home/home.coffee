@@ -5,8 +5,11 @@ Router.map ->
 		loadingTemplate: 'loading'
 		waitOn: ->
 			householdId = @params._id
-			return [this.subscribe('household', householdId), share.CategorySubscription, share.AppliancesSubscription]
-
+			[
+				this.subscribe('household', householdId),
+				Meteor.subscribe('categories'),
+				Meteor.subscribe('appliances')
+			]
 		data: ->
 			household: share.Households.findOne(@params._id)
 			categories: share.Categories.find()

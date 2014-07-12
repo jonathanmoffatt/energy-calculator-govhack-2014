@@ -2,6 +2,19 @@ Router.map ->
 	@route 'admin',
 		path: '/admin'
 		template: 'admin'
+		loadingTemplate: 'loading'
+		waitOn: ->
+			[
+				Meteor.subscribe('categories'),
+				Meteor.subscribe('appliances'),
+				Meteor.subscribe('tvs'),
+				Meteor.subscribe('dryers'),
+				Meteor.subscribe('fridges'),
+				Meteor.subscribe('monitors'),
+				Meteor.subscribe('dishwashers'),
+				Meteor.subscribe('airConditioners'),
+				Meteor.subscribe('washingMachines')
+			]
 		data: ->
 			categories: share.Categories.find()
 

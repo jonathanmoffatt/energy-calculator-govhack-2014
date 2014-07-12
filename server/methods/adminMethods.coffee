@@ -96,7 +96,8 @@ Meteor.methods
 		add 'TV', 'TV', 'Tvs', 'Brand_Reg', 'Model_No'
 		add 'Dryer', 'Clothes Dryer', 'Dryers', 'Brand', 'Model No'
 		add 'Fridge', 'Fridge', 'Fridges', 'Brand', 'Model No'
-		add 'Monitor', 'Computer Monitor', 'Monitors', 'Brand Name', 'Model Number'
+		# let's not bother with monitors; most people use laptops these days
+		#add 'Monitor', 'Computer Monitor', 'Monitors', 'Brand Name', 'Model Number'
 		add 'Dishwasher', 'Dishwasher', 'Dishwashers', 'Brand', 'Model No'
 		add 'AirConditioner', 'Air conditioner', 'AirConditioners', 'Brand', 'Model_No'
 		add 'WashingMachine', 'Washing machine', 'WashingMachines', 'Brand', 'Model No'
