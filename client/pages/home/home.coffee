@@ -35,9 +35,6 @@ getHousehold = ->
 	share.Households.findOne getHouseholdId()
 
 Template.home.rendered = ->
-	console.log 'hello'
-	share.GetDryerCostAnnually()
-	console.log 'hello2'
 	#$('select').select2()
 
 Template.home.helpers
