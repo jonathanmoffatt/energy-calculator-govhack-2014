@@ -34,6 +34,10 @@ getHouseholdId = ->
 getHousehold = ->
 	share.Households.findOne getHouseholdId()
 
+showDataEntry = (show) ->
+	Session.set 'show-data-entry', show
+
+
 Template.home.rendered = ->
 	#$('select').select2()
 
@@ -78,6 +82,8 @@ Template.home.helpers
 		model = this
 		appliance = getCurrentAppliance()
 		if appliance? and appliance.model is model then 'selected' else null
+	showDataEntry: ->
+		Session.get 'show-data-entry'
 
 Template.home.events =
 	'click a': (event) ->
@@ -93,19 +99,13 @@ Template.home.events =
 		category = share.Categories.findOne name: categoryName
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
-		appliance =
-			index: if applianceIndex is -1 then 0 else applianceIndex
-			category:
-				name: category.name
-				description: category.description
-				collection: category.collection
-		if applianceIndex is -1
-			share.Households.update householdId, $push: appliances: appliance
-			setApplianceIndex 0
-		else
-			updates = {}
-			updates["appliances.#{applianceIndex}"] = appliance
-			share.Households.update householdId, $set: updates
+		categoryInfo =
+			name: category.name
+			description: category.description
+			collection: category.collection
+		updates = {}
+		updates["appliances.#{applianceIndex}.category"] = categoryInfo
+		share.Households.update householdId, $set: updates
 		true
 	'change #uxBrand': ->
 		brand = $('#uxBrand').val()
@@ -125,12 +125,26 @@ Template.home.events =
 		updates["appliances.#{applianceIndex}.model"] = model
 		share.Households.update householdId, $set: updates
 		true
+	'click #uxAddApplianceButton': ->
+		showDataEntry true
+		household = getHousehold()
+		indexToAdd = 0
+		if household? and household.appliances?
+			# add at the end
+			indexToAdd = household.appliances.length
+		appliance =
+			index: indexToAdd
+		console.log "adding empty appliance with index #{indexToAdd}"
+		share.Households.update household._id, $push: appliances: appliance
+		setApplianceIndex indexToAdd
 
 	'click .edit-button': ->
 		appliance = this
 		console.log "switching to appliance #{appliance.index}"
+		showDataEntry true
 		setApplianceIndex appliance.index
 		# don't know why this isn't working reactively, so do manually for now
 		$('#uxApplianceCategory').val(appliance.category.name)
 		$('#uxBrand').val(appliance.brand)
+		$('#uxModelNumber').val(appliance.model)
 		true

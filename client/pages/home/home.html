@@ -64,39 +64,45 @@
 				<a href="https://data.gov.au/dataset/energy-rating-for-household-appliances">the Department of Industry</a>.
 			</p>
 
-			<form id="uxAddNewApplianceForm" action="">
-				<div class="form-group">
-					<label for="uxApplianceCategory">What type of appliance is it?</label>
-					<select class="form-control" name="Category" id="uxApplianceCategory">
-						<option value=""></option>
-						{{#each categories}}
-							<option value="{{name}}" selected={{isCategorySelected}}>{{description}}</option>
-						{{/each}}
-					</select>
+			{{#if showDataEntry}}
+				<form id="uxAddNewApplianceForm" action="">
+					<div class="form-group">
+						<label for="uxApplianceCategory">What type of appliance is it?</label>
+						<select class="form-control" name="Category" id="uxApplianceCategory">
+							<option value=""></option>
+							{{#each categories}}
+								<option value="{{name}}" selected={{isCategorySelected}}>{{description}}</option>
+							{{/each}}
+						</select>
+					</div>
+					{{#if showBrands}}
+						<div class="form-group">
+							<label for="uxBrand">What brand is it?</label>
+							<select class="form-control" name="Brand" id="uxBrand">
+								<option value=""></option>
+								{{#each getBrands}}
+									<option value="{{this}}" selected="{{isBrandSelected}}">{{this}}</option>
+								{{/each}}
+							</select>
+						</div>
+					{{/if}}
+					{{#if showModelNumbers}}
+						<div class="form-group">
+							<label for="uxModelNumber">What is the model number?</label>
+							<select class="form-control" name="ModelNumber" id="uxModelNumber">
+								<option value=""></option>
+								{{#each getModelNumbers}}
+									<option value="{{this}}" selected="{{isModelSelected}}">{{this}}</option>
+								{{/each}}
+							</select>
+						</div>
+					{{/if}}
+				</form>
+			{{else}}
+				<div class="text-center">
+					<button class="btn btn-default btn-lg" id="uxAddApplianceButton">Add an appliance</button>
 				</div>
-				{{#if showBrands}}
-					<div class="form-group">
-						<label for="uxBrand">What brand is it?</label>
-						<select class="form-control" name="Brand" id="uxBrand">
-							<option value=""></option>
-							{{#each getBrands}}
-								<option value="{{this}}" selected="{{isBrandSelected}}">{{this}}</option>
-							{{/each}}
-						</select>
-					</div>
-				{{/if}}
-				{{#if showModelNumbers}}
-					<div class="form-group">
-						<label for="uxModelNumber">What is the model number?</label>
-						<select class="form-control" name="ModelNumber" id="uxModelNumber">
-							<option value=""></option>
-							{{#each getModelNumbers}}
-								<option value="{{this}}" selected="{{isModelSelected}}">{{this}}</option>
-							{{/each}}
-						</select>
-					</div>
-				{{/if}}
-			</form>
+			{{/if}}
 
 			{{#if anyAppliances}}
 				<table class="table" style="margin-top: 30px;">
