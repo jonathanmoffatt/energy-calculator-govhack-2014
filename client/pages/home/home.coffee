@@ -45,7 +45,8 @@ getUsageLabel = (categoryName) ->
 		when 'Fridge' then null
 		when 'Dishwasher' then 'How many times do you run the dishwasher each week?'
 		when 'AirConditioner' then null #for now only
-		else null
+		else
+			null
 
 setUsageLabel = ->
 	appliance = getCurrentAppliance()
@@ -79,7 +80,7 @@ Template.home.helpers
 	getBrands: ->
 		appliance = getCurrentAppliance()
 		if appliance.category?
-			category = share.Categories.findOne name:appliance.category.name
+			category = share.Categories.findOne name: appliance.category.name
 			category.brands
 		else
 			[]
@@ -90,7 +91,7 @@ Template.home.helpers
 		brand = appliance.brand
 		if brand?
 			criteria =
-				'category.name' : appliance.category.name
+				'category.name': appliance.category.name
 				brand: brand
 			options =
 				fields:
@@ -162,7 +163,31 @@ Template.home.events =
 			householdId = getHouseholdId()
 			applianceIndex = getApplianceIndex()
 			updates = {}
-			updates["appliances.#{applianceIndex}.usage"] = usage
+			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
+
+			#to do - refactor this
+			applianceId = $('#uxModelNumber').val()
+			categoryName = $('#uxApplianceCategory').val()
+			selectedAppliance = share.Appliances.findOne({_id: applianceId})
+			defaultCEC = selectedAppliance.CEC
+
+			if categoryName == 'TV'
+				adjustedCEC = share.GetTVCostAnnually(0.259, defaultCEC, usage)
+			if categoryName == 'Dryer'
+				adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage)
+			if categoryName == 'WashingMachine'
+				adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage)
+			if categoryName == 'Fridge'
+				adjustedCEC = defaultCEC
+			if categoryName == 'Dishwasher'
+				adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage)
+			if categoryName == 'AirConditioner'
+				adjustedCEC = defaultCEC
+				#todo
+
+
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(adjustedCEC)
+
 			share.Households.update householdId, $set: updates
 		true
 
@@ -176,7 +201,8 @@ Template.home.events =
 		appliance =
 			index: indexToAdd
 		console.log "adding empty appliance with index #{indexToAdd}"
-		share.Households.update household._id, $push: appliances: appliance
+		share.Households.update household._id, $push:
+			appliances: appliance
 		setApplianceIndex indexToAdd
 		true
 	'click #uxDoneButton': ->
@@ -201,7 +227,6 @@ Template.home.events =
 myPieChart = null
 
 RefreshChart = ->
-
 	if myPieChart is null
 		household = getHousehold()
 		if household
@@ -218,27 +243,27 @@ RefreshChart = ->
 		data = [
 			{
 				value: 300,
-				color:"#F7464A",
+				color: "#F7464A",
 				highlight: "#FF5A5E",
 				label: "BLAH BLAH BLAH?"
-				labelColor : 'white'
-				labelFontSize : '16'
+				labelColor: 'white'
+				labelFontSize: '16'
 			},
 			{
 				value: 50,
 				color: "#46BFBD",
 				highlight: "#5AD3D1"
 				label: "Green"
-				labelColor : 'white'
-				labelFontSize : '16'
+				labelColor: 'white'
+				labelFontSize: '16'
 			},
 			{
 				value: 100,
 				color: "#FDB45C"
 				highlight: "#FFC870"
 				label: "Black"
-				labelColor : 'white'
-				labelFontSize : '16'
+				labelColor: 'white'
+				labelFontSize: '16'
 			}
 		]
 
