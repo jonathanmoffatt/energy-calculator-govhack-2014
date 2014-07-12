@@ -1,4 +1,5 @@
 Meteor.subscribe 'categories'
+Meteor.subscribe 'appliances'
 Meteor.subscribe 'tvs'
 Meteor.subscribe 'dryers'
 Meteor.subscribe 'fridges'

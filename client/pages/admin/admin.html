@@ -1,6 +1,11 @@
 <template name="admin">
 	<div class="container">
 		<h1>Administration</h1>
+		<h2>Categories</h2>
+		<div style="margin-bottom: 30px;">
+			<button class="btn btn-default" id="uxCreateCategoriesButton">Create (or recreate) categories</button>
+		</div>
+
 		<h2>Dataset upload</h2>
 
 		<form class="form">
@@ -21,6 +26,7 @@
 		</form>
 
 		<h2 style="margin-top: 45px;">Dataset summary</h2>
+		<p>Total appliances: <b>{{getApplianceCount}}</b></p>
 		<table class="table">
 			<thead>
 			<tr>

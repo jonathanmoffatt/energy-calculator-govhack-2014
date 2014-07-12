@@ -8,3 +8,4 @@ share.WashingMachines = new Meteor.Collection 'washingMachines'
 
 share.Categories = new Meteor.Collection 'categories'
 share.Households = new Meteor.Collection 'households'
+share.Appliances = new Meteor.Collection 'appliances'

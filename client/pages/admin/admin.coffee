@@ -18,7 +18,11 @@ Template.admin.events =
 				Meteor.call 'adminUploadFile', categoryCollection, file.srcElement.result, name, 'utf8'
 			fileReader.readAsText file
 		false
+	'click #uxCreateCategoriesButton': ->
+		Meteor.call 'adminCreateCategories'
 
 Template.admin.helpers
 	getCategoryCount: (categoryCollection) ->
 		share[categoryCollection].find().count()
+	getApplianceCount: ->
+		share.Appliances.find().count()

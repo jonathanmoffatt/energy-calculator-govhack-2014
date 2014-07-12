@@ -1,6 +1,9 @@
 Meteor.publish 'categories', ->
 	share.Categories.find()
 
+Meteor.publish 'appliances', ->
+	share.Appliances.find()
+
 Meteor.publish 'household', (householdId) ->
 	share.Households.find _id: householdId
 
@@ -57,6 +60,14 @@ Meteor.publish 'washingMachines', ->
 	share.WashingMachines.find criteria, options
 
 share.Categories.deny
+	insert: ->
+		true
+	remove: ->
+		true
+	update: ->
+		true
+
+share.Appliances.deny
 	insert: ->
 		true
 	remove: ->
