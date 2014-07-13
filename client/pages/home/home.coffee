@@ -226,16 +226,16 @@ Template.home.events =
 		if categoryName == 'Fridge'
 			usage = null
 
-		appliance = Meteor.call 'getAppliance', applianceId, (e, data) ->
+		Meteor.call 'getAppliance', applianceId, (e, data) ->
 			Session.set 'ddlSelectedAppliance', data
 			if isAirConditioner()
 				updates["appliances.#{applianceIndex}.coolingUsage"] = 200
 				updates["appliances.#{applianceIndex}.heatingUsage"] = 200
 				updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
-				updates["appliances.#{applianceIndex}.coolingStarRating"] = appliance.AirCon_Star2010_Cool
-				updates["appliances.#{applianceIndex}.heatingStarRating"] = appliance.AirCon_Star2010_Heat
-				updates["appliances.#{applianceIndex}.coolingSRI"] = appliance.AirCon_sri2010_cool
-				updates["appliances.#{applianceIndex}.heatingSRI"] = appliance.AirCon_sri2010_heat
+				updates["appliances.#{applianceIndex}.coolingStarRating"] = data.AirCon_Star2010_Cool
+				updates["appliances.#{applianceIndex}.heatingStarRating"] = data.AirCon_Star2010_Heat
+				updates["appliances.#{applianceIndex}.coolingSRI"] = data.AirCon_sri2010_cool
+				updates["appliances.#{applianceIndex}.heatingSRI"] = data.AirCon_sri2010_heat
 			else
 				updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
 				updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
@@ -268,7 +268,6 @@ Template.home.events =
 		RefreshChart()
 		true
 
-# doing weird shit, so just make it invisible as no time to fix it and can just use the done button
 	'click .add-appliance-button': ->
 		showDataEntry true
 		household = getHousehold()
@@ -282,6 +281,9 @@ Template.home.events =
 		share.Households.update household._id, $push:
 			appliances: appliance
 		setApplianceIndex indexToAdd
+		Session.set 'ddlSelectedAppliance', null
+		Session.set 'ddlSelectedAppliances', null
+		$('#uxApplianceCategory').val('')
 		true
 	'click #uxDoneButton': ->
 		showDataEntry false
@@ -467,7 +469,7 @@ getChartData = ->
 	for a in household.appliances
 		color = getRandomColors(i)
 		if a.applianceId
-			
+
 			stars = a.StarRating
 			coldstars = a.coolingStarRating
 			hotstars = a.heatingStarRating
