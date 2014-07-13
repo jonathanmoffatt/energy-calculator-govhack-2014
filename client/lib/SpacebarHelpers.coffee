@@ -28,7 +28,10 @@ UI.registerHelper 'capitalise', (string) ->
 		string.substr(0, 1).toUpperCase() + string.substr(1)
 
 UI.registerHelper 'dollars', (number) ->
-	"$#{number.toFixed(2)}"
+	if number
+		"$#{number.toFixed(2)}"
+	else
+		''
 
 UI.registerHelper 'displayStars', (stars, category, hotStars, coldstars) ->
 	if stars?

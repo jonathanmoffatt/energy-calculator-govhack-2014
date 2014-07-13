@@ -297,6 +297,25 @@ Template.home.events =
 		true
 
 # WHAT-IF AREA
+getAdjustmentFactor = (appliance) ->
+	switch (appliance.category.name)
+		when 'TV' then 0.2
+		when 'WashingMachine' then 0.27
+		when 'Dryer' then 0.15
+		when 'Dishwasher' then 0.3
+		when 'Fridge' then 0.23
+		else 0
+
+calculateSaving = (appliance, newRating) ->
+	originalRating = appliance.SRI
+	adjustmentFactor = getAdjustmentFactor appliance
+	originalCost = appliance.adjustedCEC
+	adjustedCost = originalCost * Math.pow(1 - adjustmentFactor, newRating - originalRating)
+	saving = Math.round(originalCost - adjustedCost, 0)
+	updates = {}
+	updates['lastUpdated'] = new Date()
+	updates["appliances.#{appliance.index}.adjustedSaving"] = saving
+	share.Households.update getHouseholdId(), $set: updates
 
 adjustStarRating = (appliance, adjustment) ->
 	rating = appliance.adjustedStarRating
@@ -311,6 +330,7 @@ adjustStarRating = (appliance, adjustment) ->
 	updates = {}
 	updates["appliances.#{appliance.index}.adjustedStarRating"] = rating
 	share.Households.update getHouseholdId(), $set: updates
+	rating
 
 adjustCoolingStarRating = (appliance, adjustment) ->
 	rating = appliance.adjustedCoolingStarRating
@@ -325,6 +345,7 @@ adjustCoolingStarRating = (appliance, adjustment) ->
 	updates = {}
 	updates["appliances.#{appliance.index}.adjustedCoolingStarRating"] = rating
 	share.Households.update getHouseholdId(), $set: updates
+	rating
 
 adjustHeatingStarRating = (appliance, adjustment) ->
 	rating = appliance.adjustedHeatingStarRating
@@ -339,6 +360,7 @@ adjustHeatingStarRating = (appliance, adjustment) ->
 	updates = {}
 	updates["appliances.#{appliance.index}.adjustedHeatingStarRating"] = rating
 	share.Households.update getHouseholdId(), $set: updates
+	rating
 
 Template.WhatIf.helpers
 	anyAppliances: ->
@@ -355,11 +377,13 @@ Template.WhatIf.helpers
 Template.WhatIf.events =
 	'click .reduce-star-rating': ->
 		appliance = this
-		adjustStarRating appliance, -0.5
+		rating = adjustStarRating appliance, -0.5
+		calculateSaving appliance, rating
 		true
 	'click .increase-star-rating': ->
 		appliance = this
-		adjustStarRating appliance, 0.5
+		rating = adjustStarRating appliance, 0.5
+		calculateSaving appliance, rating
 		true
 	'click .reduce-cooling-star-rating': ->
 		appliance = this

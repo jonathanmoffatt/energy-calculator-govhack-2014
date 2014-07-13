@@ -14,7 +14,7 @@
 						<tr>
 							<th>Appliance</th>
 							<th>Current star rating</th>
-							<th></th>
+							<th>Adjust</th>
 							<th>"New" star rating</th>
 							<th>Saving ($ p.a.)</th>
 						</tr>
@@ -36,7 +36,9 @@
 								<td>
 									{{{displayStars adjustedCoolingStarRating}}}
 								</td>
-								<td></td>
+								<td>
+									{{dollars adjustedSaving}}
+								</td>
 							</tr>
 							<tr>
 								<td>{{category.name}} - heating</td>
@@ -52,7 +54,9 @@
 								<td>
 									{{{displayStars adjustedHeatingStarRating}}}
 								</td>
-								<td></td>
+								<td>
+									{{dollars adjustedSaving}}
+								</td>
 							</tr>
 						{{else}}
 							<tr>
@@ -69,7 +73,9 @@
 								<td>
 									{{{displayStars adjustedStarRating}}}
 								</td>
-								<td></td>
+								<td>
+									${{adjustedSaving}}
+								</td>
 							</tr>
 						{{/if}}
 						{{/each}}
