@@ -313,7 +313,7 @@ RefreshChart = ->
 			if a.applianceId
 				data.push
 					value: parseInt(a.adjustedCEC)
-					label:  a.category.name + ' - ' + a.brand + ' ' + a.model
+					label:  a.category.name + ': ' + parseInt(a.adjustedCEC) + 'kWh/year'
 					color: color[0]
 					highlight: color[1]
 
@@ -322,7 +322,7 @@ RefreshChart = ->
 		$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
 		ctx = $("#usagePieChart")[0].getContext('2d')
 		myPieChart = new Chart(ctx).Pie data,
-			tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %> kWh"
+			tooltipTemplate: "<%=label%>"
 			tooltipEvents: ["mousemove", "touchstart", "touchmove"]
 
 
