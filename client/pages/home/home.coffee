@@ -297,6 +297,49 @@ Template.home.events =
 		true
 
 # WHAT-IF AREA
+
+adjustStarRating = (appliance, adjustment) ->
+	rating = appliance.adjustedStarRating
+	if rating?
+		rating += adjustment
+	else
+		rating = appliance.StarRating + adjustment
+	if rating < 0
+		rating = 0
+	if rating > 10
+		rating = 10
+	updates = {}
+	updates["appliances.#{appliance.index}.adjustedStarRating"] = rating
+	share.Households.update getHouseholdId(), $set: updates
+
+adjustCoolingStarRating = (appliance, adjustment) ->
+	rating = appliance.adjustedCoolingStarRating
+	if rating?
+		rating += adjustment
+	else
+		rating = appliance.coolingStarRating + adjustment
+	if rating < 0
+		rating = 0
+	if rating > 10
+		rating = 10
+	updates = {}
+	updates["appliances.#{appliance.index}.adjustedCoolingStarRating"] = rating
+	share.Households.update getHouseholdId(), $set: updates
+
+adjustHeatingStarRating = (appliance, adjustment) ->
+	rating = appliance.adjustedHeatingStarRating
+	if rating?
+		rating += adjustment
+	else
+		rating = appliance.heatingStarRating + adjustment
+	if rating < 0
+		rating = 0
+	if rating > 10
+		rating = 10
+	updates = {}
+	updates["appliances.#{appliance.index}.adjustedHeatingStarRating"] = rating
+	share.Households.update getHouseholdId(), $set: updates
+
 Template.WhatIf.helpers
 	anyAppliances: ->
 		household = getHousehold()
@@ -308,6 +351,32 @@ Template.WhatIf.helpers
 	isAirConditioner: ->
 		householdAppliance = this
 		householdAppliance.category? and householdAppliance.category.name is 'AirConditioner'
+
+Template.WhatIf.events =
+	'click .reduce-star-rating': ->
+		appliance = this
+		adjustStarRating appliance, -0.5
+		true
+	'click .increase-star-rating': ->
+		appliance = this
+		adjustStarRating appliance, 0.5
+		true
+	'click .reduce-cooling-star-rating': ->
+		appliance = this
+		adjustCoolingStarRating appliance, -0.5
+		true
+	'click .increase-cooling-star-rating': ->
+		appliance = this
+		adjustCoolingStarRating appliance, 0.5
+		true
+	'click .reduce-heating-star-rating': ->
+		appliance = this
+		adjustHeatingStarRating appliance, -0.5
+		true
+	'click .increase-heating-star-rating': ->
+		appliance = this
+		adjustHeatingStarRating appliance, 0.5
+		true
 
 
 # RESULTS AREA

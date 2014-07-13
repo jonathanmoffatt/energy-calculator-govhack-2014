@@ -7,13 +7,14 @@
 				{{#if anyAppliances}}
 					<p>
 						Let's look at how much you could save by switching to a more efficient
-						appliance (assuming similar size and specs).
+						appliance (assuming similar size and specs to your current appliance).
 					</p>
 					<table class="table" style="font-size: 13pt;">
 						<thead>
 						<tr>
 							<th>Appliance</th>
 							<th>Current star rating</th>
+							<th></th>
 							<th>"New" star rating</th>
 							<th>Saving ($ p.a.)</th>
 						</tr>
@@ -25,7 +26,6 @@
 								<td>{{category.name}} - cooling</td>
 								<td>{{{displayStars coolingStarRating}}}</td>
 								<td>
-									{{{displayStars getAdjustedCoolingStarRating}}}
 									<button class="btn btn-xs reduce-cooling-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
@@ -33,19 +33,24 @@
 										<i class="fa fa-arrow-up"></i>
 									</button>
 								</td>
+								<td>
+									{{{displayStars adjustedCoolingStarRating}}}
+								</td>
 								<td></td>
 							</tr>
 							<tr>
 								<td>{{category.name}} - heating</td>
 								<td>{{{displayStars heatingStarRating}}}</td>
 								<td>
-									{{{displayStars getAdjustedHeatingStarRating}}}
 									<button class="btn btn-xs reduce-heating-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
 									<button class="btn btn-xs increase-heating-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
+								</td>
+								<td>
+									{{{displayStars adjustedHeatingStarRating}}}
 								</td>
 								<td></td>
 							</tr>
@@ -54,13 +59,15 @@
 								<td>{{category.name}}</td>
 								<td>{{{displayStars StarRating}}}</td>
 								<td>
-									{{{displayStars getAdjustedStarRating}}}
 									<button class="btn btn-xs reduce-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
 									<button class="btn btn-xs increase-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
+								</td>
+								<td>
+									{{{displayStars adjustedStarRating}}}
 								</td>
 								<td></td>
 							</tr>
