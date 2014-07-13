@@ -404,7 +404,8 @@ getChartData = ->
 		if a.applianceId
 			selectedAppliance = share.Appliances.findOne({_id: a.applianceId})
 			stars = selectedAppliance.StarRating
-			wholeStar = selectedAppliance.StarRating % 1 == 0
+			coldstars = a.coolingStarRating
+			hotstars = a.heatingStarRating
 
 			data.push
 				value: parseInt(a.adjustedCEC)
@@ -414,10 +415,8 @@ getChartData = ->
 				title: a.category.name + '(' + a.model + ')'
 				stars: parseInt(stars)
 				costs: parseInt(a.adjustedCEC)
-				halfStar: !wholeStar
-				actualStars : stars
-				coldstars : 5
-				hotstars : 3
+				coldstars : coldstars
+				hotstars : hotstars
 				category : a.category.name
 
 		i++

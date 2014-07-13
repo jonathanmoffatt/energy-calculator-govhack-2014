@@ -30,30 +30,37 @@ UI.registerHelper 'capitalise', (string) ->
 UI.registerHelper 'dollars', (number) ->
 	"$#{number.toFixed(2)}"
 
-UI.registerHelper 'displayStars', (stars, category, hotStars, coldStars) ->
+UI.registerHelper 'displayStars', (stars, category, hotStars, coldstars) ->
 	if stars?
 		if category == 'AirConditioner'
 			i = 0
 			html = ''
 			##do hot stars
-			while i < parseInt(hotStars)
-				html = html + '<span class="glyphicon glyphicon-star"></span>'
-				i++
-			wholeStar = hotStars % 1 == 0
-			if !wholeStar
-				html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+			if hotStars
+				while i < parseInt(hotStars)
+					html = html + '<span class="glyphicon glyphicon-star"></span>'
+					i++
+				wholeStar = hotStars % 1 == 0
+				if !wholeStar
+					html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
 
-			html = html + '(heating)</br>'
+				html = html + '(heating)</br>'
+			else
+				html = html + '(no heating ratings)</br>'
+
 			##do cold stars
-			j = 0
-			while j < parseInt(coldStars)
-				html = html + '<span class="glyphicon glyphicon-star"></span>'
-				j++
-			wholeStar = coldStars % 1 == 0
-			if !wholeStar
-				html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+			if coldstars
+				j = 0
+				while j < parseInt(coldstars)
+					html = html + '<span class="glyphicon glyphicon-star"></span>'
+					j++
+				wholeStar = coldstars % 1 == 0
+				if !wholeStar
+					html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
 
-			html = html + '(cooling)'
+				html = html + '(cooling)'
+			else
+				html = html + '(no cooling ratings)</br>'
 			return html
 
 		else
