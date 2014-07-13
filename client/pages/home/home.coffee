@@ -287,22 +287,45 @@ Template.home.events =
 		Meteor.setTimeout populate, 50
 		true
 
+
+
+getRandomColors = (i) ->
+	colors = [
+		['#F7464A','#FF5A5E' ]
+		['#46BFBD','#5AD3D1']
+		['#FDB45C','#FFC870']
+		['#B48EAD','#C69CBE']
+		['#949FB1','#A8B3C5']
+		['#4D5360','#616774']
+
+	]
+
+	colors[i % colors.length]
+
+
 RefreshChart = ->
 	household = getHousehold()
 	if household
 		data = []
+		i = 0
 		for a in household.appliances
-			console.log a.applianceId
+			color = getRandomColors(i)
 			if a.applianceId
 				data.push
 					value: parseInt(a.adjustedCEC)
-					label: a.brand + ' ' + a.model
-					color:"#F7464A"
-					highlight: "#FF5A5E"
+					label:  a.category.name + ' - ' + a.brand + ' ' + a.model
+					color: color[0]
+					highlight: color[1]
+
+			i++
 
 		$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
 		ctx = $("#usagePieChart")[0].getContext('2d')
-		myPieChart = new Chart(ctx).Pie(data)
+		myPieChart = new Chart(ctx).Pie data,
+			tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %> kWh"
+			tooltipEvents: ["mousemove", "touchstart", "touchmove"]
+
+
 
 		$('#legend').replaceWith(myPieChart.generateLegend())
 
