@@ -1,0 +1,39 @@
+<template name="WhatIf">
+	<section id="WhatIf" class="content-section text-center">
+		<div class="container">
+			<div class="col-lg-8 col-lg-offset-2">
+				<h2>What if?</h2>
+
+				{{#if anyAppliances}}
+					<p>
+						Let's look at how much you could save by switching to a more efficient
+						appliance (assuming similar size and specs).
+					</p>
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Appliance</th>
+							<th>Current star rating</th>
+							<th>"New" star rating</th>
+							<th>Saving ($ p.a.)</th>
+						</tr>
+						</thead>
+						<tbody>
+						{{#each household.appliances}}
+							<tr>
+								<td>{{category.name}}</td>
+							</tr>
+						{{/each}}
+						</tbody>
+					</table>
+				{{else}}
+					<p>
+						Once you've entered your appliances you will be able to look at how much you
+						could save by switching to more efficient alternatives.
+					</p>
+				{{/if}}
+			</div>
+
+		</div>
+	</section>
+</template>

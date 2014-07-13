@@ -289,7 +289,14 @@ Template.home.events =
 		Meteor.setTimeout populate, 50
 		true
 
+# WHAT-IF AREA
+Template.WhatIf.helpers
+	anyAppliances: ->
+		household = getHousehold()
+		household? and household.appliances.length > 0
 
+
+# RESULTS AREA
 
 getRandomColors = (i) ->
 	colors = [
