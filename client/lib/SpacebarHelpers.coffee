@@ -30,17 +30,42 @@ UI.registerHelper 'capitalise', (string) ->
 UI.registerHelper 'dollars', (number) ->
 	"$#{number.toFixed(2)}"
 
-UI.registerHelper 'displayStars', (stars) ->
+UI.registerHelper 'displayStars', (stars, category, hotStars, coldStars) ->
 	if stars?
-		i = 0
-		html = ''
-		console.log stars
-		while i < parseInt(stars)
-			html = html + '<span class="glyphicon glyphicon-star"></span>'
-			i++
-		wholeStar = stars % 1 == 0
-		if !wholeStar
-			html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
-		html
+		if category == 'AirConditioner'
+			i = 0
+			html = ''
+			##do hot stars
+			while i < parseInt(hotStars)
+				html = html + '<span class="glyphicon glyphicon-star"></span>'
+				i++
+			wholeStar = hotStars % 1 == 0
+			if !wholeStar
+				html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+
+			html = html + '(heating)</br>'
+			##do cold stars
+			j = 0
+			while j < parseInt(coldStars)
+				html = html + '<span class="glyphicon glyphicon-star"></span>'
+				j++
+			wholeStar = coldStars % 1 == 0
+			if !wholeStar
+				html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+
+			html = html + '(cooling)'
+			return html
+
+		else
+			i = 0
+			html = ''
+			console.log stars
+			while i < parseInt(stars)
+				html = html + '<span class="glyphicon glyphicon-star"></span>'
+				i++
+			wholeStar = stars % 1 == 0
+			if !wholeStar
+				html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+			return html
 	else
 		''

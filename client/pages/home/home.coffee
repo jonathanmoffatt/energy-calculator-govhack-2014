@@ -347,6 +347,9 @@ getChartData = ->
 				costs: parseInt(a.adjustedCEC)
 				halfStar: !wholeStar
 				actualStars : stars
+				coldstars : 5
+				hotstars : 3
+				category : a.category.name
 
 		i++
 	data
@@ -363,41 +366,6 @@ RefreshChart = ->
 	myPieChart = new Chart(ctx).Doughnut data,
 		tooltipTemplate: "<%=label%>"
 		tooltipEvents: ["mousemove", "touchstart", "touchmove"]
-
-
-# take appliances
-# for each appliance
-#	value = CEC
-#	color is random
-#		highlight is random
-#		label : name
-
-###		data = [
-			{
-				value: 300,
-				color: "#F7464A",
-				highlight: "#FF5A5E",
-				label: "BLAH BLAH BLAH?"
-				labelColor: 'white'
-				labelFontSize: '16'
-			},
-			{
-				value: 50,
-				color: "#46BFBD",
-				highlight: "#5AD3D1"
-				label: "Green"
-				labelColor: 'white'
-				labelFontSize: '16'
-			},
-			{
-				value: 100,
-				color: "#FDB45C"
-				highlight: "#FFC870"
-				label: "Black"
-				labelColor: 'white'
-				labelFontSize: '16'
-			}
-		]###
 
 
 
