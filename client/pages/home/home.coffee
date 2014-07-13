@@ -156,6 +156,13 @@ Template.home.helpers
 			getCurrentAppliance().heatingUsage
 		else
 			''
+	getUsageDescription: (appliance) ->
+		switch appliance.category.name
+			when 'TV' then "#{appliance.usage} hrs/day"
+			when 'AirConditioner' then "#{appliance.coolingUsage}/#{appliance.heatingUsage} hrs/year"
+			when 'Dryer', 'Dishwasher', 'WashingMachine' then "#{appliance.usage} times/week"
+			when 'Fridge' then '-'
+			else appliance.usage
 
 Template.home.events =
 	'click a': (event) ->
