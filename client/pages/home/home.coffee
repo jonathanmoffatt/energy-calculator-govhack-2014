@@ -79,8 +79,8 @@ getAdjustedCEC = (usage, heatingUsage) ->
 	if categoryName == 'Dishwasher'
 		adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage * 52)
 	if categoryName == 'AirConditioner'
-		coolInput = selectedAppliance.AirCon_sri2010_cool
-		heatInput = selectedAppliance.AirCon_sri2010_heat
+		coolInput = selectedAppliance.CoolingInputRate
+		heatInput = selectedAppliance.HeatingInputRate
 		adjustedCEC =  share.GetAirConCostAnnually(0.259, coolInput, usage, heatInput, heatingUsage)
 	if categoryName == 'Fridge'
 		adjustedCEC = defaultCEC
@@ -157,12 +157,15 @@ Template.home.helpers
 		else
 			''
 	getUsageDescription: (appliance) ->
-		switch appliance.category.name
-			when 'TV' then "#{appliance.usage} hrs/day"
-			when 'AirConditioner' then "#{appliance.coolingUsage}/#{appliance.heatingUsage} hrs/year"
-			when 'Dryer', 'Dishwasher', 'WashingMachine' then "#{appliance.usage} times/week"
-			when 'Fridge' then '-'
-			else appliance.usage
+		if appliance? and appliance.category?
+			switch appliance.category.name
+				when 'TV' then "#{appliance.usage} hrs/day"
+				when 'AirConditioner' then "#{appliance.coolingUsage}+#{appliance.heatingUsage} hrs/year"
+				when 'Dryer', 'Dishwasher', 'WashingMachine' then "#{appliance.usage} times/week"
+				when 'Fridge' then '-'
+				else appliance.usage
+		else
+			''
 
 Template.home.events =
 	'click a': (event) ->
@@ -237,13 +240,12 @@ Template.home.events =
 			updates = {}
 			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
-
 			share.Households.update householdId, $set: updates
 			RefreshChart()
 		true
 	'change .aircon-usage': ->
-		coolingUsage = $('#uxCoolingUsage').val()
-		heatingUsage = $('#uxHeatingUsage').val()
+		coolingUsage = parseFloat($('#uxCoolingUsage').val())
+		heatingUsage = parseFloat($('#uxHeatingUsage').val())
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}

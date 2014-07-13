@@ -72,6 +72,8 @@ Meteor.methods
 					appliance['AirCon_sri2010_heat'] = parseFloat(record["sri2010_heat"])
 					appliance['AirCon_Star2010_Cool'] = parseFloat(record["Star2010_Cool"])
 					appliance['AirCon_Star2010_Heat'] = parseFloat(record['Star2010_Heat'])
+					appliance['CoolingInputRate'] = parseFloat(record['C-Power_Inp_Rated'])
+					appliance['HeatingInputRate'] = parseFloat(record['H-Power_Inp_Rated'])
 
 				share.Appliances.insert appliance
 

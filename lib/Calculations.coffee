@@ -15,9 +15,11 @@ share.GetTVCostAnnually = (rate, kWH10HrsDay, ActualHours) ->
 share.GetDishwasherCostAnnually = (rate, kWh365Loads, ActualLoad) ->
 	rate * kWh365Loads * (ActualLoad / 365)
 
-#Energy rating is based on 200 cold and hot hours per year
+#Cost is the input * hours * cost per kWh
 share.GetAirConCostAnnually = (rate, coolInput, coolHours, hotInput, hotHours) ->
-	(rate * coolInput * (coolHours/200)) + (rate * hotInput * (hotHours/200))
+	coolingKwHours = coolInput * coolHours
+	heatingKwHours = hotInput * hotHours
+	(coolingKwHours + heatingKwHours) * rate
 
 
 
