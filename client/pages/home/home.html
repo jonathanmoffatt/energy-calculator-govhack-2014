@@ -37,25 +37,7 @@
 	<!-- /.container -->
 </nav>
 
-<section class="intro">
-	<div class="intro-body">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
-					<h1 class="brand-heading">Energy</h1>
-					<p class="intro-text">
-						Ever wondered how much your major appliances cost to run?
-					</p>
-					<div class="page-scroll">
-						<a href="#appliances" class="btn btn-circle">
-							<i class="fa fa-angle-double-down animated"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
+{{> Intro }}
 
 <section id="appliances" class="container content-section text-center">
 	<div class="row">
@@ -175,40 +157,6 @@
 
 {{> PieChart}}
 {{> WhatIf}}
+{{> About}}
 
-
-<section id="about" class="container content-section text-center">
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2">
-			<h2>About</h2>
-			<p>
-				This application was written by Jonathan Moffatt and Wai Liu over the space
-				of 48 hours during <a href="http://www.govhack.org/">GovHack 2014</a>.
-			</p>
-			<p>
-				It's open source and is up on GitHub, so feel free to
-				clone or fork it yourself.
-			</p>
-			<p>
-				This project builds on the shoulders of many awesome open source frameworks
-				and libraries, including:
-			</p>
-			<p>
-				Grayscale theme from <a href="http://startbootstrap.com/templates/grayscale/">StartBootstrap</a>
-			</p>
-			<p>
-				To do...
-			</p>
-			<p>
-				Administrators can update the energy rating datasets
-				<a href="{{pathFor 'admin'}}">here</a>.
-			</p>
-			<ul class="list-inline banner-social-buttons">
-				<li>
-					<a href="https://github.com/jonathanmoffatt/energy-calculator-govhack-2014" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</section>
 </template>

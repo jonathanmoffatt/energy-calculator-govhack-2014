@@ -474,7 +474,7 @@ getChartData = ->
 				label: a.category.name + ': $' + parseInt(a.adjustedCEC) + '/year'
 				color: color[0]
 				highlight: color[1]
-				title: a.category.name + '(' + a.model + ')'
+				title: a.category.name + ' (' + a.model + ')'
 				stars: parseInt(stars)
 				costs: parseInt(a.adjustedCEC)
 				coldstars: coldstars
