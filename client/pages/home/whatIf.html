@@ -12,26 +12,29 @@
 					<table class="table" style="font-size: 13pt;">
 						<thead>
 						<tr>
-							<th>Appliance</th>
-							<th>Current star rating</th>
-							<th>Adjust</th>
-							<th>"New" star rating</th>
-							<th>Saving ($ p.a.)</th>
+							<th class="text-left">Appliance</th>
+							<th class="text-center">Current star rating</th>
+							<th class="text-center">Adjust</th>
+							<th class="text-center">"New" star rating</th>
+							<th class="text-center">Saving ($ p.a.)</th>
 						</tr>
 						</thead>
 						<tbody>
 						{{#each household.appliances}}
 						{{#if isAirConditioner}}
 							<tr>
-								<td>{{category.name}} - cooling</td>
+								<td class="text-left">{{category.name}} - cooling</td>
 								<td>{{{displayStars coolingStarRating}}}</td>
 								<td>
+									Coming soon!
+<!--
 									<button class="btn btn-xs reduce-cooling-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
 									<button class="btn btn-xs increase-cooling-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
+-->
 								</td>
 								<td>
 									{{{displayStars adjustedCoolingStarRating}}}
@@ -41,15 +44,18 @@
 								</td>
 							</tr>
 							<tr>
-								<td>{{category.name}} - heating</td>
+								<td class="text-left">{{category.name}} - heating</td>
 								<td>{{{displayStars heatingStarRating}}}</td>
 								<td>
+									Coming soon!
+<!--
 									<button class="btn btn-xs reduce-heating-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
 									<button class="btn btn-xs increase-heating-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
+-->
 								</td>
 								<td>
 									{{{displayStars adjustedHeatingStarRating}}}
@@ -60,7 +66,7 @@
 							</tr>
 						{{else}}
 							<tr>
-								<td>{{category.name}}</td>
+								<td class="text-left">{{category.name}}</td>
 								<td>{{{displayStars StarRating}}}</td>
 								<td>
 									<button class="btn btn-xs reduce-star-rating">
