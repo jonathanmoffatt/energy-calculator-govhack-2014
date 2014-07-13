@@ -9,7 +9,7 @@
 						Let's look at how much you could save by switching to a more efficient
 						appliance (assuming similar size and specs).
 					</p>
-					<table class="table">
+					<table class="table" style="font-size: 13pt;">
 						<thead>
 						<tr>
 							<th>Appliance</th>
@@ -20,9 +20,51 @@
 						</thead>
 						<tbody>
 						{{#each household.appliances}}
+						{{#if isAirConditioner}}
+							<tr>
+								<td>{{category.name}} - cooling</td>
+								<td>{{coolingStarRating}}</td>
+								<td>
+									<button class="btn btn-xs reduce-cooling-star-rating">
+										<i class="fa fa-arrow-down"></i>
+									</button>
+									{{getAdjustedCoolingStarRating}}
+									<button class="btn btn-xs increase-cooling-star-rating">
+										<i class="fa fa-arrow-up"></i>
+									</button>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>{{category.name}} - heating</td>
+								<td>{{heatingStarRating}}</td>
+								<td>
+									<button class="btn btn-xs reduce-heating-star-rating">
+										<i class="fa fa-arrow-down"></i>
+									</button>
+									{{getAdjustedHeatingStarRating}}
+									<button class="btn btn-xs increase-heating-star-rating">
+										<i class="fa fa-arrow-up"></i>
+									</button>
+								</td>
+								<td></td>
+							</tr>
+						{{else}}
 							<tr>
 								<td>{{category.name}}</td>
+								<td>{{StarRating}}</td>
+								<td>
+									<button class="btn btn-xs reduce-star-rating">
+										<i class="fa fa-arrow-down"></i>
+									</button>
+									{{getAdjustedStarRating}}
+									<button class="btn btn-xs increase-star-rating">
+										<i class="fa fa-arrow-up"></i>
+									</button>
+								</td>
+								<td></td>
 							</tr>
+						{{/if}}
 						{{/each}}
 						</tbody>
 					</table>

@@ -92,7 +92,6 @@ isAirConditioner = ->
 
 Template.home.rendered = ->
 	RefreshChart()
-	#$('select').select2()
 
 Template.home.helpers
 	anyAppliances: ->
@@ -221,13 +220,21 @@ Template.home.events =
 		if categoryName == 'Fridge'
 			usage = null
 
+		appliance = share.Appliances.findOne applianceId
 		if isAirConditioner()
 			updates["appliances.#{applianceIndex}.coolingUsage"] = 200
 			updates["appliances.#{applianceIndex}.heatingUsage"] = 200
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
+			updates["appliances.#{applianceIndex}.coolingStarRating"] = appliance.AirCon_Star2010_Cool
+			updates["appliances.#{applianceIndex}.heatingStarRating"] = appliance.AirCon_Star2010_Heat
+			updates["appliances.#{applianceIndex}.coolingSRI"] = appliance.AirCon_sri2010_cool
+			updates["appliances.#{applianceIndex}.heatingSRI"] = appliance.AirCon_sri2010_heat
 		else
 			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
+			updates["appliances.#{applianceIndex}.StarRating"] = appliance.StarRating
+			updates["appliances.#{applianceIndex}.SRI"] = appliance.SRI
+
 
 		RefreshChart()
 		share.Households.update householdId, $set: updates
@@ -294,6 +301,13 @@ Template.WhatIf.helpers
 	anyAppliances: ->
 		household = getHousehold()
 		household? and household.appliances.length > 0
+	getStarRating: ->
+		householdAppliance = this
+		appliance = share.Appliances.findOne householdAppliance.applianceId
+
+	isAirConditioner: ->
+		householdAppliance = this
+		householdAppliance.category? and householdAppliance.category.name is 'AirConditioner'
 
 
 # RESULTS AREA

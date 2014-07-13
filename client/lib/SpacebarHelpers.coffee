@@ -26,3 +26,6 @@ UI.registerHelper 'checkedIf', (condition) ->
 UI.registerHelper 'capitalise', (string) ->
 	if string
 		string.substr(0, 1).toUpperCase() + string.substr(1)
+
+UI.registerHelper 'dollars', (number) ->
+	"$#{number.toFixed(2)}"

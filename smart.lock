@@ -7,7 +7,8 @@
       "select2": {},
       "select2-bootstrap3-css": {},
       "iron-router": {},
-      "jquery-easing": {}
+      "jquery-easing": {},
+      "bootstrap-slider": {}
     },
     "packages": {
       "bootstrap3-less": {
@@ -39,6 +40,11 @@
         "git": "https://github.com/kenyee/meteor-jquery-easing.git",
         "tag": "v1.3.0",
         "commit": "556cf106f23692d78e5c92aa8a3bc99cf24bbd49"
+      },
+      "bootstrap-slider": {
+        "git": "https://github.com/kidovate/meteor-bootstrap-slider.git",
+        "tag": "v0.0.5",
+        "commit": "0a0421f3ceea41d05ad0c90d217589954f0dc3a0"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
