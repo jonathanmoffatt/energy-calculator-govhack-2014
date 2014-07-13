@@ -7,8 +7,7 @@ Router.map ->
 			householdId = @params._id
 			[
 				this.subscribe('household', householdId),
-				Meteor.subscribe('categories'),
-				Meteor.subscribe('appliances')
+				Meteor.subscribe('categories')
 			]
 		data: ->
 			household: share.Households.findOne(@params._id)
@@ -67,7 +66,7 @@ showUsage = ->
 getAdjustedCEC = (usage, heatingUsage) ->
 	applianceId = $('#uxModelNumber').val()
 	categoryName = $('#uxApplianceCategory').val()
-	selectedAppliance = share.Appliances.findOne({_id: applianceId})
+	selectedAppliance = Session.get 'ddlSelectedAppliance'
 	defaultCEC = selectedAppliance.CEC
 
 	if categoryName == 'TV'
@@ -121,14 +120,7 @@ Template.home.helpers
 		appliance = getCurrentAppliance()
 		brand = appliance.brand
 		if brand?
-			criteria =
-				'category.name': appliance.category.name
-				brand: brand
-			options =
-				fields:
-					_id: 1
-					model: 1
-			share.Appliances.find(criteria, options).fetch()
+			return Session.get('ddlSelectedAppliances')
 		else
 			[]
 	isModelSelected: ->
@@ -193,12 +185,24 @@ Template.home.events =
 		true
 	'change #uxBrand': ->
 		brand = $('#uxBrand').val()
+		category = $('ux')
 		console.log "changing brand to #{brand}"
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}
 		updates["appliances.#{applianceIndex}.brand"] = brand
 		share.Households.update householdId, $set: updates
+
+		criteria =
+			'category.name': $('uxApplianceCategory').val()
+			brand: brand
+		options =
+			fields:
+				_id: 1
+				model: 1
+
+		Meteor.call 'getApplianceByCriteria', criteria, options, (err, data) ->
+			Session.set 'ddlSelectedAppliances', data
 		true
 	'change #uxModelNumber': ->
 		applianceId = $('#uxModelNumber').val()
@@ -222,24 +226,23 @@ Template.home.events =
 		if categoryName == 'Fridge'
 			usage = null
 
-		appliance = share.Appliances.findOne applianceId
-		if isAirConditioner()
-			updates["appliances.#{applianceIndex}.coolingUsage"] = 200
-			updates["appliances.#{applianceIndex}.heatingUsage"] = 200
-			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
-			updates["appliances.#{applianceIndex}.coolingStarRating"] = appliance.AirCon_Star2010_Cool
-			updates["appliances.#{applianceIndex}.heatingStarRating"] = appliance.AirCon_Star2010_Heat
-			updates["appliances.#{applianceIndex}.coolingSRI"] = appliance.AirCon_sri2010_cool
-			updates["appliances.#{applianceIndex}.heatingSRI"] = appliance.AirCon_sri2010_heat
-		else
-			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
-			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
-			updates["appliances.#{applianceIndex}.StarRating"] = appliance.StarRating
-			updates["appliances.#{applianceIndex}.SRI"] = appliance.SRI
-
-
-		RefreshChart()
-		share.Households.update householdId, $set: updates
+		appliance = Meteor.call 'getAppliance', applianceId, (e, data) ->
+			Session.set 'ddlSelectedAppliance', data
+			if isAirConditioner()
+				updates["appliances.#{applianceIndex}.coolingUsage"] = 200
+				updates["appliances.#{applianceIndex}.heatingUsage"] = 200
+				updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
+				updates["appliances.#{applianceIndex}.coolingStarRating"] = appliance.AirCon_Star2010_Cool
+				updates["appliances.#{applianceIndex}.heatingStarRating"] = appliance.AirCon_Star2010_Heat
+				updates["appliances.#{applianceIndex}.coolingSRI"] = appliance.AirCon_sri2010_cool
+				updates["appliances.#{applianceIndex}.heatingSRI"] = appliance.AirCon_sri2010_heat
+			else
+				updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
+				updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
+				updates["appliances.#{applianceIndex}.StarRating"] = data.StarRating
+				updates["appliances.#{applianceIndex}.SRI"] = data.SRI
+			RefreshChart()
+			share.Households.update householdId, $set: updates
 		true
 	'change #uxUsage': ->
 		usage = $('#uxUsage').val()
@@ -464,8 +467,8 @@ getChartData = ->
 	for a in household.appliances
 		color = getRandomColors(i)
 		if a.applianceId
-			selectedAppliance = share.Appliances.findOne({_id: a.applianceId})
-			stars = selectedAppliance.StarRating
+			
+			stars = a.StarRating
 			coldstars = a.coolingStarRating
 			hotstars = a.heatingStarRating
 

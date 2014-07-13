@@ -1,8 +1,15 @@
 Meteor.publish 'categories', ->
 	share.Categories.find()
 
-Meteor.publish 'appliances', ->
-	share.Appliances.find()
+Meteor.publish 'appliances', (householdId) ->
+	if householdId
+
+		data = share.Appliances.find
+			_id :
+				$in: share.Households.find(_id: householdId).fetch()
+
+		console.log data.count()
+		data
 
 Meteor.publish 'household', (householdId) ->
 	share.Households.find _id: householdId

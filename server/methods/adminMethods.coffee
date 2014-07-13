@@ -1,5 +1,11 @@
 Meteor.methods
 
+	getApplianceByCriteria: (criteria, options) ->
+		share.Appliances.find(criteria, options).fetch()
+
+	getAppliance: (applianceId) ->
+		share.Appliances.findOne(applianceId)
+
 	adminUploadFile: (categoryCollection, blob, name, encoding) ->
 		Converter = Meteor.require('csvtojson').core.Converter
 		csvConverter = new Converter constructResult:true
@@ -103,5 +109,7 @@ Meteor.methods
 		add 'Dishwasher', 'Dishwasher', 'Dishwashers', 'Brand', 'Model No'
 		add 'AirConditioner', 'Air conditioner', 'AirConditioners', 'Brand', 'Model_No'
 		add 'WashingMachine', 'Washing machine', 'WashingMachines', 'Brand', 'Model No'
+
+
 
 
