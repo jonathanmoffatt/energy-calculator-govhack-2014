@@ -97,6 +97,16 @@
 							</select>
 						</div>
 					{{/if}}
+					{{#if showAirConditionerUsage}}
+						<div class="form-group">
+							<label for="uxCoolingUsage">How many hours of cooling per year?</label>
+							<input class="aircon-usage form-control" id="uxCoolingUsage" type="text" value="{{getCoolingUsage}}"/>
+						</div>
+						<div class="form-group">
+							<label for="uxHeatingUsage">How many hours of heating per year?</label>
+							<input class="aircon-usage form-control" id="uxHeatingUsage" type="text" value="{{getHeatingUsage}}"/>
+						</div>
+					{{/if}}
 					{{#if showUsage}}
 						<div class="form-group">
 							<label for="uxUsage" id="#uxUsage">{{getValueFromSession 'usage-label'}}</label>

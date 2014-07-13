@@ -48,7 +48,7 @@ getUsageLabel = (categoryName) ->
 		when 'WashingMachine' then 'How many loads of washing do you do each week?'
 		when 'Fridge' then null
 		when 'Dishwasher' then 'How many times do you run the dishwasher each week?'
-		when 'AirConditioner' then null #for now only
+		when 'AirConditioner' then '---'
 		else
 			null
 
@@ -64,7 +64,7 @@ showUsage = ->
 	appliance.applianceId? and Session.get('usage-label')?
 
 
-getAdjustedCEC = (usage) ->
+getAdjustedCEC = (usage, heatingUsage) ->
 	applianceId = $('#uxModelNumber').val()
 	categoryName = $('#uxApplianceCategory').val()
 	selectedAppliance = share.Appliances.findOne({_id: applianceId})
@@ -79,10 +79,15 @@ getAdjustedCEC = (usage) ->
 	if categoryName == 'Dishwasher'
 		adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage * 52)
 	if categoryName == 'AirConditioner'
-		adjustedCEC = defaultCEC #temporary
+		coolInput = selectedAppliance.AirCon_sri2010_cool
+		heatInput = selectedAppliance.AirCon_sri2010_heat
+		adjustedCEC =  share.GetAirConCostAnnually(0.259, coolInput, usage, heatInput, heatingUsage)
 	if categoryName == 'Fridge'
 		adjustedCEC = defaultCEC
 	adjustedCEC
+
+isAirConditioner = ->
+	getCurrentAppliance().category.name is 'AirConditioner'
 
 
 Template.home.rendered = ->
@@ -135,10 +140,22 @@ Template.home.helpers
 	showDoneButton: ->
 		getCurrentAppliance().model?
 	showUsage: ->
-		showUsage()
+		showUsage() and not isAirConditioner()
+	showAirConditionerUsage: ->
+		showUsage() and isAirConditioner()
 	getUsage: ->
 		appliance = getCurrentAppliance()
 		appliance.usage
+	getCoolingUsage: ->
+		if isAirConditioner()
+			getCurrentAppliance().coolingUsage
+		else
+			''
+	getHeatingUsage: ->
+		if isAirConditioner()
+			getCurrentAppliance().heatingUsage
+		else
+			''
 
 Template.home.events =
 	'click a': (event) ->
@@ -191,13 +208,17 @@ Template.home.events =
 			usage = 7
 		if categoryName == 'Dishwasher'
 			usage = 7
-		if categoryName == 'AirConditioner'
-			usage = null
 		if categoryName == 'Fridge'
 			usage = null
 
-		updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
-		updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
+		if isAirConditioner()
+			updates["appliances.#{applianceIndex}.coolingUsage"] = 200
+			updates["appliances.#{applianceIndex}.heatingUsage"] = 200
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
+		else
+			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
+
 		RefreshChart()
 		share.Households.update householdId, $set: updates
 		true
@@ -212,6 +233,18 @@ Template.home.events =
 
 			share.Households.update householdId, $set: updates
 			RefreshChart()
+		true
+	'change .aircon-usage': ->
+		coolingUsage = $('#uxCoolingUsage').val()
+		heatingUsage = $('#uxHeatingUsage').val()
+		householdId = getHouseholdId()
+		applianceIndex = getApplianceIndex()
+		updates = {}
+		updates["appliances.#{applianceIndex}.coolingUsage"] = parseFloat(coolingUsage)
+		updates["appliances.#{applianceIndex}.heatingUsage"] = parseFloat(heatingUsage)
+		updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(coolingUsage, heatingUsage))
+		share.Households.update householdId, $set: updates
+		RefreshChart()
 		true
 
 	# doing weird shit, so just make it invisible as no time to fix it and can just use the done button
