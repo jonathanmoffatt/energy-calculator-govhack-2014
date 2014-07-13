@@ -325,22 +325,6 @@ getRandomColors = (i) ->
 
 	colors[i % colors.length]
 
-
-
-starHTML = (stars) ->
-	i = 0
-	html = ''
-	console.log stars
-	while i < parseInt(stars)
-		html = html + '<span class="glyphicon glyphicon-star"></span>'
-		i++
-
-	wholeStar = stars % 1 == 0
-	if !wholeStar
-		html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
-
-	html
-
 getChartData = ->
 	household = getHousehold()
 
@@ -363,7 +347,6 @@ getChartData = ->
 				costs: parseInt(a.adjustedCEC)
 				halfStar: !wholeStar
 				actualStars : stars
-				starHTML : starHTML(stars)
 
 		i++
 	data

@@ -29,3 +29,18 @@ UI.registerHelper 'capitalise', (string) ->
 
 UI.registerHelper 'dollars', (number) ->
 	"$#{number.toFixed(2)}"
+
+UI.registerHelper 'displayStars', (stars) ->
+	if stars?
+		i = 0
+		html = ''
+		console.log stars
+		while i < parseInt(stars)
+			html = html + '<span class="glyphicon glyphicon-star"></span>'
+			i++
+		wholeStar = stars % 1 == 0
+		if !wholeStar
+			html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+		html
+	else
+		''

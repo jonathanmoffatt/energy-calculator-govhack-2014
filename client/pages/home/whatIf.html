@@ -23,12 +23,12 @@
 						{{#if isAirConditioner}}
 							<tr>
 								<td>{{category.name}} - cooling</td>
-								<td>{{coolingStarRating}}</td>
+								<td>{{{displayStars coolingStarRating}}}</td>
 								<td>
+									{{{displayStars getAdjustedCoolingStarRating}}}
 									<button class="btn btn-xs reduce-cooling-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
-									{{getAdjustedCoolingStarRating}}
 									<button class="btn btn-xs increase-cooling-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
@@ -37,12 +37,12 @@
 							</tr>
 							<tr>
 								<td>{{category.name}} - heating</td>
-								<td>{{heatingStarRating}}</td>
+								<td>{{{displayStars heatingStarRating}}}</td>
 								<td>
+									{{{displayStars getAdjustedHeatingStarRating}}}
 									<button class="btn btn-xs reduce-heating-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
-									{{getAdjustedHeatingStarRating}}
 									<button class="btn btn-xs increase-heating-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
@@ -52,12 +52,12 @@
 						{{else}}
 							<tr>
 								<td>{{category.name}}</td>
-								<td>{{StarRating}}</td>
+								<td>{{{displayStars StarRating}}}</td>
 								<td>
+									{{{displayStars getAdjustedStarRating}}}
 									<button class="btn btn-xs reduce-star-rating">
 										<i class="fa fa-arrow-down"></i>
 									</button>
-									{{getAdjustedStarRating}}
 									<button class="btn btn-xs increase-star-rating">
 										<i class="fa fa-arrow-up"></i>
 									</button>
