@@ -81,7 +81,7 @@ getAdjustedCEC = (usage, heatingUsage) ->
 	if categoryName == 'AirConditioner'
 		coolInput = selectedAppliance.CoolingInputRate
 		heatInput = selectedAppliance.HeatingInputRate
-		adjustedCEC =  share.GetAirConCostAnnually(0.259, coolInput, usage, heatInput, heatingUsage)
+		adjustedCEC = share.GetAirConCostAnnually(0.259, coolInput, usage, heatInput, heatingUsage)
 	if categoryName == 'Fridge'
 		adjustedCEC = defaultCEC
 	adjustedCEC
@@ -92,6 +92,7 @@ isAirConditioner = ->
 
 Template.home.rendered = ->
 	RefreshChart()
+	RefreshBarChart()
 
 Template.home.helpers
 	anyAppliances: ->
@@ -162,7 +163,8 @@ Template.home.helpers
 				when 'AirConditioner' then "#{appliance.coolingUsage}+#{appliance.heatingUsage} hrs/year"
 				when 'Dryer', 'Dishwasher', 'WashingMachine' then "#{appliance.usage} times/week"
 				when 'Fridge' then '-'
-				else appliance.usage
+				else
+					appliance.usage
 		else
 			''
 
@@ -263,7 +265,7 @@ Template.home.events =
 		RefreshChart()
 		true
 
-	# doing weird shit, so just make it invisible as no time to fix it and can just use the done button
+# doing weird shit, so just make it invisible as no time to fix it and can just use the done button
 	'click .add-appliance-button': ->
 		showDataEntry true
 		household = getHousehold()
@@ -304,7 +306,8 @@ getAdjustmentFactor = (appliance) ->
 		when 'Dryer' then 0.15
 		when 'Dishwasher' then 0.3
 		when 'Fridge' then 0.23
-		else 0
+		else
+			0
 
 calculateSaving = (appliance, newRating) ->
 	originalRating = appliance.SRI
@@ -379,11 +382,13 @@ Template.WhatIf.events =
 		appliance = this
 		rating = adjustStarRating appliance, -0.5
 		calculateSaving appliance, rating
+		RefreshBarChart()
 		true
 	'click .increase-star-rating': ->
 		appliance = this
 		rating = adjustStarRating appliance, 0.5
 		calculateSaving appliance, rating
+		RefreshBarChart()
 		true
 	'click .reduce-cooling-star-rating': ->
 		appliance = this
@@ -407,16 +412,49 @@ Template.WhatIf.events =
 
 getRandomColors = (i) ->
 	colors = [
-		['#F7464A','#FF5A5E' ]
-		['#46BFBD','#5AD3D1']
-		['#FDB45C','#FFC870']
-		['#B48EAD','#C69CBE']
-		['#949FB1','#A8B3C5']
-		['#4D5360','#616774']
+		['#F7464A', '#FF5A5E' ]
+		['#46BFBD', '#5AD3D1']
+		['#FDB45C', '#FFC870']
+		['#B48EAD', '#C69CBE']
+		['#949FB1', '#A8B3C5']
+		['#4D5360', '#616774']
 
 	]
-
 	colors[i % colors.length]
+
+getBarData = ->
+	household = getHousehold()
+	labels = []
+	originalCosts = []
+	newCosts = []
+
+	for a in household.appliances
+		labels.push a.category.name
+		originalCosts.push parseInt(a.adjustedCEC)
+		newCosts.push parseInt(a.adjustedCEC- a.adjustedSaving)
+
+	data =
+		labels: labels
+		datasets: [
+			{
+				data: originalCosts
+				label: "My First dataset"
+				fillColor: "rgba(220,220,220,0.5)"
+				strokeColor: "rgba(220,220,220,0.8)"
+				highlightFill: "rgba(220,220,220,0.75)"
+				highlightStroke: "rgba(220,220,220,1)"
+			}
+			{
+				label: "My Second dataset"
+				fillColor: "rgba(151,187,205,0.5)"
+				strokeColor: "rgba(151,187,205,0.8)"
+				highlightFill: "rgba(151,187,205,0.75)"
+				highlightStroke: "rgba(151,187,205,1)"
+				data: newCosts
+			}
+		]
+	data
+
 
 getChartData = ->
 	household = getHousehold()
@@ -433,15 +471,15 @@ getChartData = ->
 
 			data.push
 				value: parseInt(a.adjustedCEC)
-				label:  a.category.name + ': $' + parseInt(a.adjustedCEC) + '/year'
+				label: a.category.name + ': $' + parseInt(a.adjustedCEC) + '/year'
 				color: color[0]
 				highlight: color[1]
 				title: a.category.name + '(' + a.model + ')'
 				stars: parseInt(stars)
 				costs: parseInt(a.adjustedCEC)
-				coldstars : coldstars
-				hotstars : hotstars
-				category : a.category.name
+				coldstars: coldstars
+				hotstars: hotstars
+				category: a.category.name
 
 		i++
 	data
@@ -451,7 +489,6 @@ Template.PieChart.helpers
 		getChartData()
 
 RefreshChart = ->
-
 	data = getChartData()
 	$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="400" height="400"></canvas>')
 	ctx = $("#usagePieChart")[0].getContext('2d')
@@ -460,5 +497,9 @@ RefreshChart = ->
 		tooltipEvents: ["mousemove", "touchstart", "touchmove"]
 
 
-
+RefreshBarChart = ->
+	data = getBarData()
+	$('#barChart').replaceWith('<canvas id="barChart" width="400" height="400"></canvas>')
+	ctx = $("#barChart")[0].getContext('2d')
+	myBarChart = new Chart(ctx).Bar data
 
