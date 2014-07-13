@@ -312,31 +312,60 @@ getRandomColors = (i) ->
 	colors[i % colors.length]
 
 
-RefreshChart = ->
+
+starHTML = (stars) ->
+	i = 0
+	html = ''
+	console.log stars
+	while i < parseInt(stars)
+		html = html + '<span class="glyphicon glyphicon-star"></span>'
+		i++
+
+	wholeStar = stars % 1 == 0
+	if !wholeStar
+		html = html + '<span class="glyphicon glyphicon-star-empty"></span>'
+
+	html
+
+getChartData = ->
 	household = getHousehold()
-	if household
-		data = []
-		i = 0
-		for a in household.appliances
-			color = getRandomColors(i)
-			if a.applianceId
-				data.push
-					value: parseInt(a.adjustedCEC)
-					label:  a.category.name + ': ' + parseInt(a.adjustedCEC) + 'kWh/year'
-					color: color[0]
-					highlight: color[1]
 
-			i++
+	data = []
+	i = 0
+	for a in household.appliances
+		color = getRandomColors(i)
+		if a.applianceId
+			selectedAppliance = share.Appliances.findOne({_id: a.applianceId})
+			stars = selectedAppliance.StarRating
+			wholeStar = selectedAppliance.StarRating % 1 == 0
 
-		$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="500" height="500"></canvas>')
-		ctx = $("#usagePieChart")[0].getContext('2d')
-		myPieChart = new Chart(ctx).Pie data,
-			tooltipTemplate: "<%=label%>"
-			tooltipEvents: ["mousemove", "touchstart", "touchmove"]
+			data.push
+				value: parseInt(a.adjustedCEC)
+				label:  a.category.name + ': $' + parseInt(a.adjustedCEC) + '/year'
+				color: color[0]
+				highlight: color[1]
+				title: a.category.name + '(' + a.model + ')'
+				stars: parseInt(stars)
+				costs: parseInt(a.adjustedCEC)
+				halfStar: !wholeStar
+				actualStars : stars
+				starHTML : starHTML(stars)
 
+		i++
+	data
 
+Template.PieChart.helpers
+	chartData: ->
+		getChartData()
 
-		$('#legend').replaceWith(myPieChart.generateLegend())
+RefreshChart = ->
+
+	data = getChartData()
+	$('#usagePieChart').replaceWith('<canvas id="usagePieChart" width="400" height="400"></canvas>')
+	ctx = $("#usagePieChart")[0].getContext('2d')
+	myPieChart = new Chart(ctx).Doughnut data,
+		tooltipTemplate: "<%=label%>"
+		tooltipEvents: ["mousemove", "touchstart", "touchmove"]
 
 
 # take appliances
