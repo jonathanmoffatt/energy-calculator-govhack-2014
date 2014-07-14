@@ -18,9 +18,6 @@ Router.map ->
 		data: ->
 			categories: share.Categories.find()
 
-Template.admin.rendered = ->
-	#$('#uxCategory').select2()
-
 Template.admin.events =
 	'click #uxUploadDatasetButton': ->
 		categoryCollection = $('#uxCategory').val()

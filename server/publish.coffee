@@ -7,6 +7,9 @@ Meteor.publish 'household', (householdId) ->
 Meteor.publish 'households', ->
 	share.Households.find()
 
+Meteor.publish 'appliances', ->
+	share.Appliances.find()
+
 Meteor.publish 'tvs', ->
 	criteria = {}
 	options =
