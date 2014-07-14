@@ -6,7 +6,7 @@ Meteor.methods
 	getAppliance: (applianceId) ->
 		share.Appliances.findOne(applianceId)
 
-	adminUploadFile: (categoryCollection, blob, name, encoding) ->
+	adminUploadFile: (categoryCollection, clearExistingData, blob, name, encoding) ->
 		Converter = Meteor.require('csvtojson').core.Converter
 		csvConverter = new Converter constructResult:true
 		response = Async.runSync (done) ->
@@ -20,7 +20,8 @@ Meteor.methods
 			# import the raw data
 			json = response.result
 			collection = share[categoryCollection]
-			collection.remove {}
+			if clearExistingData
+				collection.remove {}
 			_(json).each (record) ->
 				collection.insert record
 
@@ -45,9 +46,8 @@ Meteor.methods
 				if SRIRecordName
 					currObj[commonSRI] = parseFloat(record[SRIRecordName])
 
-			# create a record for every category/brand combination, containing all the models
+			# create a record for every model with a standardised set of data
 			setupAppliances = (category, record) ->
-
 				appliance =
 					category:
 						name: category.name
@@ -55,24 +55,17 @@ Meteor.methods
 						collection: category.collection
 					brand: record[category.brandField]
 					model: record[category.modelField]
-
-
 				if category.name == 'TV'
 					addCommonFields(appliance, record, 'CEC', 'Star', 'SRI')
 					appliance['TVStar2'] = parseFloat(record.Star2)
-
 				if category.name == 'Dryer'
 					addCommonFields(appliance, record, 'New CEC', 'New Star', 'New SRI')
-
 				if category.name == 'Fridge'
 					addCommonFields(appliance, record, 'CEC_', 'Star2009', 'SRI2009')
-
 				if category.name == 'Dishwasher'
 					addCommonFields(appliance, record, 'CEC_', 'New Star', 'New SRI')
-
 				if category.name == 'WashingMachine'
 					addCommonFields(appliance, record, 'CEC_', 'New Star', 'New SRI')
-
 				if category.name == 'AirConditioner'
 					appliance['AirCon_sri2010_cool'] = parseFloat(record["sri2010_cool"])
 					appliance['AirCon_sri2010_heat'] = parseFloat(record["sri2010_heat"])
@@ -80,15 +73,14 @@ Meteor.methods
 					appliance['AirCon_Star2010_Heat'] = parseFloat(record['Star2010_Heat'])
 					appliance['CoolingInputRate'] = parseFloat(record['C-Power_Inp_Rated'])
 					appliance['HeatingInputRate'] = parseFloat(record['H-Power_Inp_Rated'])
-
 				share.Appliances.insert appliance
 
-
-
-			share.Appliances.remove 'category.collection': categoryCollection
+			if clearExistingData
+				share.Appliances.remove 'category.collection': categoryCollection
 			setupAppliances(category, record) for record in json
 
-			msg = "#{json.length} records were imported into collection #{categoryCollection}"
+			cleared = if clearExistingData then ' after wiping the existing records' else ''
+			msg = "#{json.length} records were imported into collection #{categoryCollection}#{cleared}"
 			console.log msg
 			msg
 

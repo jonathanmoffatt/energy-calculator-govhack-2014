@@ -21,11 +21,12 @@ Router.map ->
 Template.admin.events =
 	'click #uxUploadDatasetButton': ->
 		categoryCollection = $('#uxCategory').val()
+		clearExistingData = $('#uxClearExistingData').is(':checked')
 		uploader = $("#uxDataUploader")
 		_(uploader[0].files).each (file) ->
 			fileReader = new FileReader()
 			fileReader.onload = (file) ->
-				Meteor.call 'adminUploadFile', categoryCollection, file.srcElement.result, name, 'utf8'
+				Meteor.call 'adminUploadFile', categoryCollection, clearExistingData, file.srcElement.result, name, 'utf8'
 			fileReader.readAsText file
 		false
 	'click #uxCreateCategoriesButton': ->
