@@ -166,7 +166,7 @@ Template.home.helpers
 		else
 			''
 	getUsageDescription: (appliance) ->
-		if appliance? and appliance.category?
+		if appliance? and appliance.category? and (appliance.usage? or appliance.coolingUsage or appliance.heatingUsage)
 			switch appliance.category.name
 				when 'TV' then "#{appliance.usage} hrs/day"
 				when 'AirConditioner' then "#{appliance.coolingUsage}+#{appliance.heatingUsage} hrs/year"
