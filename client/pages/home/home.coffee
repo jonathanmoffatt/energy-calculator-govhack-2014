@@ -7,7 +7,7 @@ Router.map ->
 			householdId = @params._id
 			[
 				this.subscribe('household', householdId),
-				Meteor.subscribe('categories')
+				this.subscribe('categories')
 			]
 		data: ->
 			household: share.Households.findOne(@params._id)
@@ -98,13 +98,13 @@ Template.home.helpers
 		household = getHousehold()
 		household? and household.appliances.length > 0
 	isCategorySelected: ->
-		categoryName = this
+		category = this
 		appliance = getCurrentAppliance()
-		if appliance.category? and appliance.category.name is categoryName then 'selected' else null
+		category? and appliance.category? and appliance.category.name is category.name
 	isBrandSelected: ->
-		brand = this
+		brand = this.toString()
 		appliance = getCurrentAppliance()
-		if appliance? and appliance.brand is brand then 'selected' else null
+		appliance? and appliance.brand is brand
 	showBrands: ->
 		getCurrentAppliance().category?
 	getBrands: ->
@@ -126,7 +126,7 @@ Template.home.helpers
 	isModelSelected: ->
 		appliance = this
 		currentAppliance = getCurrentAppliance()
-		if appliance._id is currentAppliance._id then 'selected' else null
+		appliance._id is currentAppliance._id
 	showDataEntry: ->
 		Session.get 'show-data-entry'
 	showDoneButton: ->
@@ -295,12 +295,6 @@ Template.home.events =
 		showDataEntry true
 		setApplianceIndex appliance.index
 		setUsageLabel()
-		# don't know why this isn't working reactively, so do manually for now
-		populate = ->
-			$('#uxApplianceCategory').val(appliance.category.name)
-			$('#uxBrand').val(appliance.brand)
-			$('#uxModelNumber').val(appliance.applianceId)
-		Meteor.setTimeout populate, 50
 		true
 
 # WHAT-IF AREA
