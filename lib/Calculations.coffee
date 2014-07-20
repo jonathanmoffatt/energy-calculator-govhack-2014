@@ -15,6 +15,10 @@ share.GetTVCostAnnually = (rate, kWH10HrsDay, ActualHours) ->
 share.GetDishwasherCostAnnually = (rate, kWh365Loads, ActualLoad) ->
 	rate * kWh365Loads * (ActualLoad / 365)
 
+#Fridges are assumed to run continuously all year
+share.GetFridgeCostAnnually = (rate, kWhPerYear) ->
+	rate * kWhPerYear
+
 #Cost is the input * hours * cost per kWh
 share.GetAirConCostAnnually = (rate, coolInput, coolHours, hotInput, hotHours) ->
 	coolingKwHours = coolInput * coolHours

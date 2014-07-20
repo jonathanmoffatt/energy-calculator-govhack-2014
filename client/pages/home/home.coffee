@@ -79,21 +79,22 @@ getAdjustedCEC = (usage, heatingUsage) ->
 	categoryName = $('#uxApplianceCategory').val()
 	selectedAppliance = share.Appliances.findOne applianceId
 	defaultCEC = selectedAppliance.CEC
+	rate = 0.259 # assumed electricity rate in $ per kwH
 
 	if categoryName == 'TV'
-		adjustedCEC = share.GetTVCostAnnually(0.259, defaultCEC, usage)
+		adjustedCEC = share.GetTVCostAnnually(rate, defaultCEC, usage)
 	if categoryName == 'Dryer'
-		adjustedCEC = share.GetDryerCostAnnually(0.259, defaultCEC, usage * 52)
+		adjustedCEC = share.GetDryerCostAnnually(rate, defaultCEC, usage * 52)
 	if categoryName == 'WashingMachine'
-		adjustedCEC = share.GetWashingMachineCostAnnually(0.259, defaultCEC, usage * 52) #question is how many per week
+		adjustedCEC = share.GetWashingMachineCostAnnually(rate, defaultCEC, usage * 52) #question is how many per week
 	if categoryName == 'Dishwasher'
-		adjustedCEC = share.GetDishwasherCostAnnually(0.259, defaultCEC, usage * 52)
+		adjustedCEC = share.GetDishwasherCostAnnually(rate, defaultCEC, usage * 52)
 	if categoryName == 'AirConditioner'
 		coolInput = selectedAppliance.CoolingInputRate
 		heatInput = selectedAppliance.HeatingInputRate
-		adjustedCEC = share.GetAirConCostAnnually(0.259, coolInput, usage, heatInput, heatingUsage)
+		adjustedCEC = share.GetAirConCostAnnually(rate, coolInput, usage, heatInput, heatingUsage)
 	if categoryName == 'Fridge'
-		adjustedCEC = defaultCEC
+		adjustedCEC = share.GetFridgeCostAnnually(rate, defaultCEC)
 	adjustedCEC
 
 isAirConditioner = ->
