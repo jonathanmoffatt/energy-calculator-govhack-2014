@@ -7,12 +7,20 @@ Router.map ->
 			householdId = @params._id
 			[
 				this.subscribe('household', householdId),
-				this.subscribe('categories'),
-				this.subscribe('appliances', householdId)
+				this.subscribe('categories')
 			]
 		data: ->
 			household: share.Households.findOne(@params._id)
 			categories: share.Categories.find()
+		onBeforeAction: ->
+			if this.data().household
+				# now that our household is ready we can ask for the appliance details for the
+				# category/brand of each of our household appliances (we don't want to just
+				# subscribe to all appliances as it makes the app too slow)
+				household = this.data().household
+				criteria = _(household.appliances).map (a) ->
+					{brand: a.brand, 'category.name': a.category.name}
+				this.subscribe('appliances', criteria).wait()
 		onAfterAction: ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
@@ -121,13 +129,15 @@ Template.home.helpers
 		appliance = getCurrentAppliance()
 		brand = appliance.brand
 		if brand?
-			return Session.get('ddlSelectedAppliances')
+			share.Appliances.find
+				brand: brand
+				'category.name': appliance.category.name
 		else
 			[]
 	isModelSelected: ->
 		appliance = this
 		currentAppliance = getCurrentAppliance()
-		appliance._id is currentAppliance._id
+		appliance._id is currentAppliance.applianceId
 	showDataEntry: ->
 		Session.get 'show-data-entry'
 	showDoneButton: ->
@@ -186,24 +196,11 @@ Template.home.events =
 		true
 	'change #uxBrand': ->
 		brand = $('#uxBrand').val()
-		category = $('ux')
-		console.log "changing brand to #{brand}"
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}
 		updates["appliances.#{applianceIndex}.brand"] = brand
 		share.Households.update householdId, $set: updates
-
-		criteria =
-			'category.name': $('uxApplianceCategory').val()
-			brand: brand
-		options =
-			fields:
-				_id: 1
-				model: 1
-
-		Meteor.call 'getApplianceByCriteria', criteria, options, (err, data) ->
-			Session.set 'ddlSelectedAppliances', data
 		true
 	'change #uxModelNumber': ->
 		applianceId = $('#uxModelNumber').val()
@@ -283,7 +280,6 @@ Template.home.events =
 			appliances: appliance
 		setApplianceIndex indexToAdd
 		Session.set 'ddlSelectedAppliance', null
-		Session.set 'ddlSelectedAppliances', null
 		$('#uxApplianceCategory').val('')
 		true
 	'click #uxDoneButton': ->

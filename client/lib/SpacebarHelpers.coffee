@@ -69,7 +69,6 @@ UI.registerHelper 'displayStars', (stars, category, hotStars, coldstars) ->
 		else
 			i = 0
 			html = ''
-			console.log stars
 			while i < parseInt(stars)
 				html = html + '<span class="glyphicon glyphicon-star"></span>'
 				i++
