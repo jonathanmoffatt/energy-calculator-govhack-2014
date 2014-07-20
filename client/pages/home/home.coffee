@@ -7,7 +7,8 @@ Router.map ->
 			householdId = @params._id
 			[
 				this.subscribe('household', householdId),
-				this.subscribe('categories')
+				this.subscribe('categories'),
+				this.subscribe('appliances', householdId)
 			]
 		data: ->
 			household: share.Households.findOne(@params._id)

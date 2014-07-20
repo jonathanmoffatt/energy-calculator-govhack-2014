@@ -7,8 +7,17 @@ Meteor.publish 'household', (householdId) ->
 Meteor.publish 'households', ->
 	share.Households.find()
 
-Meteor.publish 'appliances', ->
-	share.Appliances.find()
+Meteor.publish 'appliances', (householdId) ->
+	# this works for an existing household, but will not reactively change when the household
+	# is modified.
+	household = share.Households.findOne householdId
+	# we want to return the models for each of the category/brand combinations that the user has chosen
+	if household?
+		criteria = _(household.appliances).map (a) ->
+			{brand: a.brand, 'category.name': a.category.name}
+		share.Appliances.find $or: criteria
+	else
+		null
 
 Meteor.publish 'tvs', ->
 	criteria = {}
