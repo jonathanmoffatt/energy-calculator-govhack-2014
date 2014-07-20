@@ -75,7 +75,7 @@ showUsage = ->
 getAdjustedCEC = (usage, heatingUsage) ->
 	applianceId = $('#uxModelNumber').val()
 	categoryName = $('#uxApplianceCategory').val()
-	selectedAppliance = Session.get 'ddlSelectedAppliance'
+	selectedAppliance = share.Appliances.findOne applianceId
 	defaultCEC = selectedAppliance.CEC
 
 	if categoryName == 'TV'
@@ -205,7 +205,6 @@ Template.home.events =
 	'change #uxModelNumber': ->
 		applianceId = $('#uxModelNumber').val()
 		model = $("#uxModelNumber option[value='#{applianceId}']").text()
-		console.log "changing model to #{model} and applianceId to #{applianceId}"
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
 		updates = {}
@@ -224,23 +223,21 @@ Template.home.events =
 		if categoryName == 'Fridge'
 			usage = null
 
-		Meteor.call 'getAppliance', applianceId, (e, data) ->
-			Session.set 'ddlSelectedAppliance', data
-			if isAirConditioner()
-				updates["appliances.#{applianceIndex}.coolingUsage"] = 200
-				updates["appliances.#{applianceIndex}.heatingUsage"] = 200
-				updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
-				updates["appliances.#{applianceIndex}.coolingStarRating"] = data.AirCon_Star2010_Cool
-				updates["appliances.#{applianceIndex}.heatingStarRating"] = data.AirCon_Star2010_Heat
-				updates["appliances.#{applianceIndex}.coolingSRI"] = data.AirCon_sri2010_cool
-				updates["appliances.#{applianceIndex}.heatingSRI"] = data.AirCon_sri2010_heat
-			else
-				updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
-				updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
-				updates["appliances.#{applianceIndex}.StarRating"] = data.StarRating
-				updates["appliances.#{applianceIndex}.SRI"] = data.SRI
-			RefreshChart()
-			share.Households.update householdId, $set: updates
+		if isAirConditioner()
+			updates["appliances.#{applianceIndex}.coolingUsage"] = 200
+			updates["appliances.#{applianceIndex}.heatingUsage"] = 200
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
+			updates["appliances.#{applianceIndex}.coolingStarRating"] = data.AirCon_Star2010_Cool
+			updates["appliances.#{applianceIndex}.heatingStarRating"] = data.AirCon_Star2010_Heat
+			updates["appliances.#{applianceIndex}.coolingSRI"] = data.AirCon_sri2010_cool
+			updates["appliances.#{applianceIndex}.heatingSRI"] = data.AirCon_sri2010_heat
+		else
+			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
+			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
+			updates["appliances.#{applianceIndex}.StarRating"] = data.StarRating
+			updates["appliances.#{applianceIndex}.SRI"] = data.SRI
+		RefreshChart()
+		share.Households.update householdId, $set: updates
 		true
 	'change #uxUsage': ->
 		usage = $('#uxUsage').val()
@@ -275,11 +272,9 @@ Template.home.events =
 			indexToAdd = household.appliances.length
 		appliance =
 			index: indexToAdd
-		console.log "adding empty appliance with index #{indexToAdd}"
 		share.Households.update household._id, $push:
 			appliances: appliance
 		setApplianceIndex indexToAdd
-		Session.set 'ddlSelectedAppliance', null
 		$('#uxApplianceCategory').val('')
 		true
 	'click #uxDoneButton': ->

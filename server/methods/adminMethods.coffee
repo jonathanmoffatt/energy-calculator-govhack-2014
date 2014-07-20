@@ -1,11 +1,5 @@
 Meteor.methods
 
-	getApplianceByCriteria: (criteria, options) ->
-		share.Appliances.find(criteria, options).fetch()
-
-	getAppliance: (applianceId) ->
-		share.Appliances.findOne(applianceId)
-
 	adminUploadFile: (categoryCollection, clearExistingData, blob, name, encoding) ->
 		Converter = Meteor.require('csvtojson').core.Converter
 		csvConverter = new Converter constructResult:true
