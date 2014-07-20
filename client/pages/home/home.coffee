@@ -18,10 +18,13 @@ Router.map ->
 				# category/brand of each of our household appliances (we don't want to just
 				# subscribe to all appliances as it makes the app too slow)
 				household = this.data().household
-				criteria = _(household.appliances).map (a) ->
+				fullyEnteredAppliances = _(household.appliances).filter (a) ->
+					a.brand? and a.category? and a.category.name?
+				criteria = _(fullyEnteredAppliances).map (a) ->
 					{brand: a.brand, 'category.name': a.category.name}
-				# don't .wait() here or we will get the loading screen flashing up during appliance entry
-				this.subscribe('appliances', criteria)
+				if criteria.length > 0
+					# note: don't call .wait() here or we will get the loading screen flashing up during appliance entry
+					this.subscribe('appliances', criteria)
 		onAfterAction: ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
@@ -121,7 +124,7 @@ Template.home.helpers
 		getCurrentAppliance().category?
 	getBrands: ->
 		appliance = getCurrentAppliance()
-		if appliance.category?
+		if appliance.category? and appliance.category.name?
 			category = share.Categories.findOne name: appliance.category.name
 			category.brands
 		else
@@ -148,7 +151,6 @@ Template.home.helpers
 	showUsage: ->
 		showUsage() and not isAirConditioner()
 	showAirConditionerUsage: ->
-		console.log "showAirConditionerUsage: showUsage()=#{showUsage()}; isAirConditioner=#{isAirConditioner()}"
 		showUsage() and isAirConditioner()
 	getUsage: ->
 		appliance = getCurrentAppliance()
