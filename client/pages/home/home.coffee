@@ -20,7 +20,8 @@ Router.map ->
 				household = this.data().household
 				criteria = _(household.appliances).map (a) ->
 					{brand: a.brand, 'category.name': a.category.name}
-				this.subscribe('appliances', criteria).wait()
+				# don't .wait() here or we will get the loading screen flashing up during appliance entry
+				this.subscribe('appliances', criteria)
 		onAfterAction: ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
@@ -69,6 +70,7 @@ setUsageLabel = ->
 
 showUsage = ->
 	appliance = getCurrentAppliance()
+	console.log "showUsage: applianceId=#{appliance.applianceId}"
 	appliance.applianceId? and Session.get('usage-label')?
 
 
@@ -145,6 +147,7 @@ Template.home.helpers
 	showUsage: ->
 		showUsage() and not isAirConditioner()
 	showAirConditionerUsage: ->
+		console.log "showAirConditionerUsage: showUsage()=#{showUsage()}; isAirConditioner=#{isAirConditioner()}"
 		showUsage() and isAirConditioner()
 	getUsage: ->
 		appliance = getCurrentAppliance()
@@ -204,6 +207,7 @@ Template.home.events =
 		true
 	'change #uxModelNumber': ->
 		applianceId = $('#uxModelNumber').val()
+		appliance = share.Appliances.findOne applianceId
 		model = $("#uxModelNumber option[value='#{applianceId}']").text()
 		householdId = getHouseholdId()
 		applianceIndex = getApplianceIndex()
@@ -227,15 +231,15 @@ Template.home.events =
 			updates["appliances.#{applianceIndex}.coolingUsage"] = 200
 			updates["appliances.#{applianceIndex}.heatingUsage"] = 200
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(200, 200))
-			updates["appliances.#{applianceIndex}.coolingStarRating"] = data.AirCon_Star2010_Cool
-			updates["appliances.#{applianceIndex}.heatingStarRating"] = data.AirCon_Star2010_Heat
-			updates["appliances.#{applianceIndex}.coolingSRI"] = data.AirCon_sri2010_cool
-			updates["appliances.#{applianceIndex}.heatingSRI"] = data.AirCon_sri2010_heat
+			updates["appliances.#{applianceIndex}.coolingStarRating"] = appliance.AirCon_Star2010_Cool
+			updates["appliances.#{applianceIndex}.heatingStarRating"] = appliance.AirCon_Star2010_Heat
+			updates["appliances.#{applianceIndex}.coolingSRI"] = appliance.AirCon_sri2010_cool
+			updates["appliances.#{applianceIndex}.heatingSRI"] = appliance.AirCon_sri2010_heat
 		else
 			updates["appliances.#{applianceIndex}.usage"] = parseFloat(usage)
 			updates["appliances.#{applianceIndex}.adjustedCEC"] = parseFloat(getAdjustedCEC(usage))
-			updates["appliances.#{applianceIndex}.StarRating"] = data.StarRating
-			updates["appliances.#{applianceIndex}.SRI"] = data.SRI
+			updates["appliances.#{applianceIndex}.StarRating"] = appliance.StarRating
+			updates["appliances.#{applianceIndex}.SRI"] = appliance.SRI
 		RefreshChart()
 		share.Households.update householdId, $set: updates
 		true
@@ -275,7 +279,6 @@ Template.home.events =
 		share.Households.update household._id, $push:
 			appliances: appliance
 		setApplianceIndex indexToAdd
-		$('#uxApplianceCategory').val('')
 		true
 	'click #uxDoneButton': ->
 		showDataEntry false
