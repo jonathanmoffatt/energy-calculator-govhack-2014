@@ -33,7 +33,7 @@ getCurrentAppliance = ->
 	household = getHousehold()
 	applianceIndex = getApplianceIndex()
 	if household? and household.appliances? and applianceIndex isnt -1
-		_(household.appliances).find (a) -> a.index is applianceIndex
+		household.appliances[applianceIndex]
 	else
 		category: null
 
@@ -43,6 +43,14 @@ getApplianceIndex = ->
 
 setApplianceIndex = (index) ->
 	Session.set 'appliance-index', index
+
+getIndexOfAppliance = (appliance) ->
+	household = getHousehold()
+	if household?
+		applianceIds = _(household.appliances).pluck 'applianceId'
+		_(applianceIds).indexOf appliance.applianceId
+	else
+		-1
 
 getHouseholdId = ->
 	Session.get 'household-id'
@@ -275,10 +283,8 @@ Template.home.events =
 		household = getHousehold()
 		indexToAdd = 0
 		if household? and household.appliances?
-			lastAppliance = _(household.appliances).max (a) -> a.index
-			indexToAdd = lastAppliance.index + 1
-		appliance =
-			index: indexToAdd
+			indexToAdd = household.appliances.length
+		appliance = {}
 		share.Households.update household._id, $push:
 			appliances: appliance
 		setApplianceIndex indexToAdd
@@ -289,16 +295,17 @@ Template.home.events =
 		false
 	'click .edit-button': ->
 		appliance = this
-		console.log "switching to appliance #{appliance.index}"
+		index = getIndexOfAppliance appliance
+		console.log "switching to appliance #{index}"
 		showDataEntry true
-		setApplianceIndex appliance.index
+		setApplianceIndex index
 		setUsageLabel()
 		true
 	'click .remove-button': ->
 		appliance = this
 		householdId = getHouseholdId()
-		share.Households.update householdId, $pull: appliances: index: appliance.index
-		updates = {}
+		share.Households.update householdId, $pull: appliances: appliance
+		showDataEntry false
 		true
 
 # WHAT-IF AREA
@@ -318,9 +325,10 @@ calculateSaving = (appliance, newRating) ->
 	originalCost = appliance.adjustedCEC
 	adjustedCost = originalCost * Math.pow(1 - adjustmentFactor, newRating - originalRating)
 	saving = Math.round(originalCost - adjustedCost, 0)
+	index = getIndexOfAppliance(appliance)
 	updates = {}
 	updates['lastUpdated'] = new Date()
-	updates["appliances.#{appliance.index}.adjustedSaving"] = saving
+	updates["appliances.#{index}.adjustedSaving"] = saving
 	share.Households.update getHouseholdId(), $set: updates
 
 adjustStarRating = (appliance, adjustment) ->
@@ -333,8 +341,9 @@ adjustStarRating = (appliance, adjustment) ->
 		rating = 0
 	if rating > 10
 		rating = 10
+	index = getIndexOfAppliance(appliance)
 	updates = {}
-	updates["appliances.#{appliance.index}.adjustedStarRating"] = rating
+	updates["appliances.#{index}.adjustedStarRating"] = rating
 	share.Households.update getHouseholdId(), $set: updates
 	rating
 
@@ -348,8 +357,9 @@ adjustCoolingStarRating = (appliance, adjustment) ->
 		rating = 0
 	if rating > 10
 		rating = 10
+	index = getIndexOfAppliance(appliance)
 	updates = {}
-	updates["appliances.#{appliance.index}.adjustedCoolingStarRating"] = rating
+	updates["appliances.#{index}.adjustedCoolingStarRating"] = rating
 	share.Households.update getHouseholdId(), $set: updates
 	rating
 
@@ -363,8 +373,9 @@ adjustHeatingStarRating = (appliance, adjustment) ->
 		rating = 0
 	if rating > 10
 		rating = 10
+	index = getIndexOfAppliance(appliance)
 	updates = {}
-	updates["appliances.#{appliance.index}.adjustedHeatingStarRating"] = rating
+	updates["appliances.#{index}.adjustedHeatingStarRating"] = rating
 	share.Households.update getHouseholdId(), $set: updates
 	rating
 
