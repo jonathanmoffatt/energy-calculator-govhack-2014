@@ -2,47 +2,45 @@
 
 
     <section id="PieChart" class="content-section text-center">
-        <div class="download-section">
-            <div class="container">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <h2>Results</h2>
-                    <p>
-                        Here are the costings and comparisons of the appliances you selected.
-                    </p>
-                    <canvas id="usagePieChart" width="400" height="400"></canvas>
-                </div>
-                <div class="col-lg-8 col-lg-offset-2">
-
-                    <table class="table" style="font-size: 13pt;">
-                        <tbody>
-
-                        {{#each chartData}}
-                        <tr>
-                            <td style="background-color:{{color}}" width="8px">
-                            </td>
-                            <td>
-                                {{title}}
-                            </td>
-                            <td>
-	                            {{{displayStars stars category hotstars coldstars}}}
-                            </td>
-                            <td>
-                                ${{costs}} / year
-                            </td>
-                        </tr>
-
-                        {{/each}}
-                        </tbody>
-                    </table>
-
-                </div>
+        <div class="container">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Results</h2>
+                <p>
+                    Here are the costings and comparisons of the appliances you selected.
+                </p>
+                <canvas id="usagePieChart" width="400" height="400"></canvas>
             </div>
+            <div class="col-lg-8 col-lg-offset-2">
 
-            <div class="page-scroll">
-                <a href="#WhatIf" class="btn btn-circle">
-                    <i class="fa fa-angle-double-down animated"></i>
-                </a>
+                <table class="table" style="font-size: 13pt;">
+                    <tbody>
+
+                    {{#each chartData}}
+                    <tr>
+                        <td style="background-color:{{color}}" width="8px">
+                        </td>
+                        <td>
+                            {{title}}
+                        </td>
+                        <td>
+                            {{{displayStars stars category hotstars coldstars}}}
+                        </td>
+                        <td>
+                            ${{costs}} / year
+                        </td>
+                    </tr>
+
+                    {{/each}}
+                    </tbody>
+                </table>
+
             </div>
+        </div>
+
+        <div class="page-scroll">
+            <a href="#WhatIf" class="btn btn-circle">
+                <i class="fa fa-angle-double-down animated"></i>
+            </a>
         </div>
 
     </section>

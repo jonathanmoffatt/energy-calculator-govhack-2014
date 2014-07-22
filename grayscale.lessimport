@@ -261,7 +261,7 @@ a:focus {
     width: 100%;
     padding: 50px 0;
     color: @light;
-    background: url(/downloads-bg.jpg) no-repeat center center scroll;
+    background: url(/trees.jpg) no-repeat center center scroll;
     background-color: @dark;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -281,7 +281,7 @@ a:focus {
     }
 
     .download-section {
-        padding: 100px 0;
+        padding: 30px 0;
     }
 }
 
