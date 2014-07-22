@@ -143,9 +143,11 @@ Template.home.helpers
 		appliance = getCurrentAppliance()
 		brand = appliance.brand
 		if brand?
-			share.Appliances.find
+			criteria =
 				brand: brand
 				'category.name': appliance.category.name
+			options = sort: model: 1
+			share.Appliances.find criteria, options
 		else
 			[]
 	isModelSelected: ->
