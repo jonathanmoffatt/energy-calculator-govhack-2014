@@ -33,7 +33,7 @@ getCurrentAppliance = ->
 	household = getHousehold()
 	applianceIndex = getApplianceIndex()
 	if household? and household.appliances? and applianceIndex isnt -1
-		household.appliances[getApplianceIndex()]
+		_(household.appliances).find (a) -> a.index is applianceIndex
 	else
 		category: null
 
@@ -73,9 +73,7 @@ setUsageLabel = ->
 
 showUsage = ->
 	appliance = getCurrentAppliance()
-	console.log "showUsage: applianceId=#{appliance.applianceId}"
-	appliance.applianceId? and Session.get('usage-label')?
-
+	appliance? and appliance.applianceId? and Session.get('usage-label')?
 
 getAdjustedCEC = (usage, heatingUsage) ->
 	applianceId = $('#uxModelNumber').val()
@@ -115,13 +113,14 @@ Template.home.helpers
 	isCategorySelected: ->
 		category = this
 		appliance = getCurrentAppliance()
-		category? and appliance.category? and appliance.category.name is category.name
+		category? and appliance? and appliance.category? and appliance.category.name is category.name
 	isBrandSelected: ->
 		brand = this.toString()
 		appliance = getCurrentAppliance()
 		appliance? and appliance.brand is brand
 	showBrands: ->
-		getCurrentAppliance().category?
+		appliance = getCurrentAppliance()
+		appliance? and appliance.category?
 	getBrands: ->
 		appliance = getCurrentAppliance()
 		if appliance.category? and appliance.category.name?
@@ -130,7 +129,8 @@ Template.home.helpers
 		else
 			[]
 	showModelNumbers: ->
-		getCurrentAppliance().brand?
+		appliance = getCurrentAppliance()
+		appliance? and appliance.brand?
 	getAppliances: ->
 		appliance = getCurrentAppliance()
 		brand = appliance.brand
@@ -147,7 +147,8 @@ Template.home.helpers
 	showDataEntry: ->
 		Session.get 'show-data-entry'
 	showDoneButton: ->
-		getCurrentAppliance().model?
+		appliance = getCurrentAppliance()
+		appliance? and appliance.model?
 	showUsage: ->
 		showUsage() and not isAirConditioner()
 	showAirConditionerUsage: ->
@@ -269,14 +270,13 @@ Template.home.events =
 		share.Households.update householdId, $set: updates
 		RefreshChart()
 		true
-
 	'click .add-appliance-button': ->
 		showDataEntry true
 		household = getHousehold()
 		indexToAdd = 0
 		if household? and household.appliances?
-			# add at the end
-			indexToAdd = household.appliances.length
+			lastAppliance = _(household.appliances).max (a) -> a.index
+			indexToAdd = lastAppliance.index + 1
 		appliance =
 			index: indexToAdd
 		share.Households.update household._id, $push:
@@ -293,6 +293,12 @@ Template.home.events =
 		showDataEntry true
 		setApplianceIndex appliance.index
 		setUsageLabel()
+		true
+	'click .remove-button': ->
+		appliance = this
+		householdId = getHouseholdId()
+		share.Households.update householdId, $pull: appliances: index: appliance.index
+		updates = {}
 		true
 
 # WHAT-IF AREA
