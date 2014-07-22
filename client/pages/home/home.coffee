@@ -29,6 +29,12 @@ Router.map ->
 			householdId = @params._id
 			Session.set 'household-id', householdId
 
+scrollTo = (href, additionalOffset) ->
+	isInternalLink = href.lastIndexOf('#', 0) is 0
+	if isInternalLink
+		$('html, body').stop().animate({scrollTop: $(href).offset().top - additionalOffset}, 1500, 'easeInOutExpo')
+	not isInternalLink
+
 getCurrentAppliance = ->
 	household = getHousehold()
 	applianceIndex = getApplianceIndex()
@@ -192,10 +198,7 @@ Template.home.events =
 	'click a': (event) ->
 		$anchor = $(event.currentTarget)
 		href = $anchor.attr('href')
-		isInternalLink = href.lastIndexOf('#', 0) is 0
-		if isInternalLink
-			$('html, body').stop().animate({scrollTop: $(href).offset().top}, 1500, 'easeInOutExpo')
-		not isInternalLink
+		scrollTo href, 0
 	'change #uxApplianceCategory': ->
 		categoryName = $('#uxApplianceCategory').val()
 		console.log "changing appliance category to #{categoryName}"
@@ -290,6 +293,7 @@ Template.home.events =
 		share.Households.update household._id, $push:
 			appliances: appliance
 		setApplianceIndex indexToAdd
+		scrollTo '#uxAddNewApplianceForm', 70
 		true
 	'click #uxDoneButton': ->
 		showDataEntry false
@@ -302,6 +306,7 @@ Template.home.events =
 		showDataEntry true
 		setApplianceIndex index
 		setUsageLabel()
+		scrollTo '#uxAddNewApplianceForm', 70
 		true
 	'click .remove-button': ->
 		appliance = this
