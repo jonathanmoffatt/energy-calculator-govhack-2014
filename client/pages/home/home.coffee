@@ -30,7 +30,7 @@ Router.map ->
 			Session.set 'household-id', householdId
 
 scrollTo = (href, additionalOffset) ->
-	isInternalLink = href.lastIndexOf('#', 0) is 0
+	isInternalLink = href.lastIndexOf('#', 0) is 0 and $(href).offset()?
 	if isInternalLink
 		$('html, body').stop().animate({scrollTop: $(href).offset().top - additionalOffset}, 1500, 'easeInOutExpo')
 	not isInternalLink
