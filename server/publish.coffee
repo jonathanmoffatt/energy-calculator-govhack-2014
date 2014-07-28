@@ -10,6 +10,9 @@ Meteor.publish 'households', ->
 Meteor.publish 'appliances', (criteria) ->
 	share.Appliances.find $or: criteria
 
+Meteor.publish 'all-appliances', ->
+	share.Appliances.find {}, {fields: {_id: 1}}
+
 Meteor.publish 'tvs', ->
 	criteria = {}
 	options =

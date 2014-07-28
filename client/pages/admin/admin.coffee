@@ -5,15 +5,15 @@ Router.map ->
 		loadingTemplate: 'loading'
 		waitOn: ->
 			[
-				Meteor.subscribe('categories'),
-				Meteor.subscribe('appliances'),
-				Meteor.subscribe('tvs'),
-				Meteor.subscribe('dryers'),
-				Meteor.subscribe('fridges'),
-				Meteor.subscribe('monitors'),
-				Meteor.subscribe('dishwashers'),
-				Meteor.subscribe('airConditioners'),
-				Meteor.subscribe('washingMachines')
+				this.subscribe('categories'),
+				this.subscribe('all-appliances'),
+				this.subscribe('tvs'),
+				this.subscribe('dryers'),
+				this.subscribe('fridges'),
+				this.subscribe('monitors'),
+				this.subscribe('dishwashers'),
+				this.subscribe('airConditioners'),
+				this.subscribe('washingMachines')
 			]
 		data: ->
 			categories: share.Categories.find()
